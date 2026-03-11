@@ -1,2 +1,8 @@
-# SC2002-OOP-Assignment
-Turn Based Combat game written in Java for NTU CCDS SC2002 Object Oriented Programming Assignment
+# SC2002: Object-Oriented Turn-based Combat System
+
+### Compilation and Execution Instructions
+From the root directory of the project (where the `src` folder is located):
+
+**Compile:**
+```bash
+javac -d bin src/AppMain.java src/control/*.java src/core/entities/*.java src/core/actions/*.java src/core/effects/*.java src/core/items/*.java src/ui/*.java
