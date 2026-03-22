@@ -5,7 +5,7 @@ From the root directory of the project (where the `src` folder is located):
 
 **Compile:**
 ```bash
-javac -d bin src/AppMain.java src/control/*.java src/core/entities/*.java src/core/actions/*.java src/core/effects/*.java src/core/items/*.java src/ui/*.java
+javac -d bin src/main/java/sc2002/combat/AppMain.java src/main/java/sc2002/combat/control/*.java src/main/java/sc2002/combat/core/entities/*.java src/main/java/sc2002/combat/core/actions/*.java src/main/java/sc2002/combat/core/effects/*.java src/main/java/sc2002/combat/core/items/*.java src/main/java/sc2002/combat/ui/*.java
 ```
 
 **Execute:**
