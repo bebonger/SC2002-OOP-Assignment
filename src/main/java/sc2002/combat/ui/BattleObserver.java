@@ -6,6 +6,8 @@ public interface BattleObserver {
     void onRoundStart(int roundNumber);
     void onTurnStart(Entity activeEntity);
 
-    // other events
     void onDamageDealt(Entity target, int damage, int currentHP, boolean isEliminated);
+
+    void onGameOver(boolean playerAlive, int roundCount, int remainingDetail);
+        
 }
