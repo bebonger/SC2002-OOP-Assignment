@@ -7,7 +7,13 @@ public interface BattleObserver {
     void onTurnStart(Entity activeEntity);
 
     void onDamageDealt(Entity target, int damage, int currentHP, boolean isEliminated);
+    void onActionExecuted(Entity attacker, String actionName, Entity target);
 
     void onGameOver(boolean playerAlive, int roundCount, int remainingDetail);
+    void onStatusEffectApplied(Entity entity, String effectName, int duration);
+    void onStatusEffectExpired(Entity entity, String effectName);
+
+    void onItemUsed(Entity user, String itemName);
+    void displayMessage(String message);
         
 }
