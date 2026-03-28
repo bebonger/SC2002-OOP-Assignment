@@ -59,13 +59,11 @@ public class CombatConsole implements BattleObserver {
         System.out.println(DIVIDER);
 
         if (playerAlive) {
-            System.out.println("Result: Victory");
-            System.out.println("Rounds survived: " + roundCount);
-            System.out.println("Player HP remaining: " + remainingDetail);
+            System.out.println("Congratulations, you have defeated all your enemies.");
+            System.out.println("Statistics: Remaining HP: " + remainingDetail + " | Total Rounds: " + roundCount);
         } else {
-            System.out.println("Result: Defeat");
-            System.out.println("Rounds survived: " + roundCount);
-            System.out.println("Enemies left standing: " + remainingDetail);
+            System.out.println("Defeated. Don't give up, try again!");
+            System.out.println("Statistics: Enemies remaining: " + remainingDetail + " | Total Rounds Survived: " + roundCount);
         }
     }
 

@@ -13,23 +13,41 @@ import sc2002.combat.core.items.Item;
 import sc2002.combat.ui.BattleObserver;
 
 public class BattleController {
+    private enum BattleOutcome {
+        ONGOING,
+        PLAYER_WIN,
+        ENEMY_WIN
+    }
+
     private final List<Entity> entities;
+    private final List<Entity> backupEnemies;
     private final BattleObserver observer;
     private final TurnOrderStrategy turnStrategy;
     private int roundCount;
+    private boolean backupSpawned;
 
     public BattleController(BattleObserver observer) {
         this.observer = observer;
         this.entities = new ArrayList<>();
+        this.backupEnemies = new ArrayList<>();
         this.turnStrategy = new SpeedComparator();
         this.roundCount = 0;
+        this.backupSpawned = false;
     }
 
-    public void startBattle(Player player, List<Entity> enemies) {
+    public void startBattle(Player player, List<Entity> initialEnemies, List<Entity> backupEnemies) {
         this.entities.clear();
+        this.backupEnemies.clear();
+        
         this.entities.add(player);
-        this.entities.addAll(enemies);
+        this.entities.addAll(initialEnemies);
+        
+        if (backupEnemies != null) {
+            this.backupEnemies.addAll(backupEnemies);
+        }
+        
         this.roundCount = 0;
+        this.backupSpawned = false;
         
         runBattleLoop();
     }
@@ -45,28 +63,42 @@ public class BattleController {
             
             turnStrategy.sort(entities);
             
-            for (Entity current : entities) {
+            // Create a copy of the list for iteration to avoid ConcurrentModificationException
+            // if backup spawns add to the original entities list mid-round
+            List<Entity> currentRoundEntities = new ArrayList<>(entities);
+            
+            for (Entity current : currentRoundEntities) {
                 if (!current.isAlive()) {
                     continue;
                 }
                 
                 processTurn(current);
-                
-                // Check win/loss conditions
-                boolean playerAlive = false;
-                boolean enemiesAlive = false;
-                for (Entity e : entities) {
-                    if (e == null) {
-                        continue;
+
+                BattleOutcome outcome = evaluateBattleOutcome(current);
+                if (outcome == BattleOutcome.PLAYER_WIN && !backupSpawned && !backupEnemies.isEmpty()) {
+                    // Trigger Backup Spawn
+                    entities.addAll(backupEnemies);
+                    backupSpawned = true;
+                    if (observer != null) {
+                        observer.displayMessage("Backup enemies have spawned!");
                     }
-                    if (e instanceof Player && e.isAlive()) playerAlive = true;
-                    if (!(e instanceof Player) && e.isAlive()) enemiesAlive = true;
+                    
+                    // Mark backup enemies as having taken their turn for this round
+                    // so they don't attack immediately upon spawning
+                    for (Entity backup : backupEnemies) {
+                        backup.setCanTakeAction(false);
+                    }
+                    
+                    // Break out of the current round's loop so the newly added entities
+                    // can be sorted properly into the next round's turn order
+                    break;
                 }
-                
-                if (!playerAlive || !enemiesAlive) {
+
+                if (outcome != BattleOutcome.ONGOING) {
                     isBattleOngoing = false;
                     if (observer != null) {
                         int remainingDetail = 0;
+                        boolean playerAlive = outcome == BattleOutcome.PLAYER_WIN;
                         if (playerAlive) {
                             for (Entity e : entities) {
                                 if (e == null) {
@@ -88,6 +120,39 @@ public class BattleController {
                 }
             }
         }
+    }
+
+    private BattleOutcome evaluateBattleOutcome(Entity actingEntity) {
+        boolean playerAlive = false;
+        boolean enemiesAlive = false;
+
+        for (Entity e : entities) {
+            if (e == null) {
+                continue;
+            }
+
+            if (e instanceof Player && e.isAlive()) {
+                playerAlive = true;
+            }
+            if (!(e instanceof Player) && e.isAlive()) {
+                enemiesAlive = true;
+            }
+        }
+
+        if (playerAlive && enemiesAlive) {
+            return BattleOutcome.ONGOING;
+        }
+        if (playerAlive) {
+            return BattleOutcome.PLAYER_WIN;
+        }
+        if (enemiesAlive) {
+            return BattleOutcome.ENEMY_WIN;
+        }
+
+        if (actingEntity instanceof Player) {
+            return BattleOutcome.PLAYER_WIN;
+        }
+        return BattleOutcome.ENEMY_WIN;
     }
 
     private void processTurn(Entity current) {

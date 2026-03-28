@@ -2,7 +2,6 @@ package sc2002.combat.control;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import sc2002.combat.core.entities.Enemy;
 import sc2002.combat.core.entities.Entity;
@@ -17,8 +16,6 @@ import sc2002.combat.core.items.SmokeBombItem;
 import sc2002.combat.ui.BattleObserver;
 
 public class GameInitialiser {
-    private static final Scanner INPUT = new Scanner(System.in);
-
     private final BattleController engine;
     private final BattleObserver observer;
 
@@ -28,16 +25,22 @@ public class GameInitialiser {
     }
 
     public void start() {
+        displayLoadingScreenDetails();
+
         String playerName = askNonEmpty("Enter your player name:");
         String classChoice = askClassChoice();
-        String difficulty = askDifficulty();
 
         Player player = setupPlayer(playerName, classChoice);
-        grantStarterItems(player);
-        List<Enemy> enemies = setupLevel(difficulty);
+        chooseStarterItem(player);
 
-        List<Entity> battleEnemies = new ArrayList<>(enemies);
-        engine.startBattle(player, battleEnemies);
+        String difficulty = askDifficulty();
+        List<Enemy> initialEnemies = setupLevel(difficulty);
+        List<Enemy> backupEnemies = setupBackupLevel(difficulty);
+
+        List<Entity> battleInitialEnemies = new ArrayList<>(initialEnemies);
+        List<Entity> battleBackupEnemies = new ArrayList<>(backupEnemies);
+        
+        engine.startBattle(player, battleInitialEnemies, battleBackupEnemies);
     }
     
     private Player setupPlayer(String playerName, String classChoice) {
@@ -52,27 +55,48 @@ public class GameInitialiser {
         return player;
     }
 
-    private void grantStarterItems(Player player) {
-        player.getInventory().add(new PotionItem());
-        player.getInventory().add(new PowerStoneItem());
-        player.getInventory().add(new SmokeBombItem());
+    private void chooseStarterItem(Player player) {
+        display("Choose 2 starter items (Duplicates are allowed):");
+        display("1. Health Potion - Restore 100 HP");
+        display("2. Power Stone - Trigger special skill immediately");
+        display("3. Smoke Bomb - Dodge attacks for 2 turns");
+
+        for (int i = 1; i <= 2; i++) {
+            display("Select Item " + i + ":");
+            int choice = readIntInRange(1, 3);
+            if (choice == 1) {
+                player.getInventory().add(new PotionItem());
+                display("Health Potion added to inventory.");
+            } else if (choice == 2) {
+                player.getInventory().add(new PowerStoneItem());
+                display("Power Stone added to inventory.");
+            } else {
+                player.getInventory().add(new SmokeBombItem());
+                display("Smoke Bomb added to inventory.");
+            }
+        }
     }
 
     private List<Enemy> setupLevel(String difficulty) {
         List<Enemy> enemies = new ArrayList<>();
 
-        if ("Hard".equalsIgnoreCase(difficulty)) {
-            enemies.add(new Goblin("Goblin 1"));
-            enemies.add(new Goblin("Goblin 2"));
-            enemies.add(new Wolf("Wolf 1"));
-            enemies.add(new Wolf("Wolf 2"));
-        } else if ("Medium".equalsIgnoreCase(difficulty)) {
-            enemies.add(new Goblin("Goblin 1"));
-            enemies.add(new Wolf("Wolf 1"));
-            enemies.add(new Wolf("Wolf 2"));
-        } else {
-            enemies.add(new Goblin("Goblin 1"));
-            enemies.add(new Wolf("Wolf 1"));
+        switch (difficulty.toLowerCase()) {
+            case "hard":
+                enemies.add(new Goblin("Goblin 1"));
+                enemies.add(new Goblin("Goblin 2"));
+                // Note: Backup Spawn is 1 Goblin, 2 Wolf (to be handled by BattleController logic later)
+                break;
+            case "medium":
+                enemies.add(new Goblin("Goblin 1"));
+                enemies.add(new Wolf("Wolf 1"));
+                // Note: Backup Spawn is 2 Wolf (to be handled by BattleController logic later)
+                break;
+            case "easy":
+            default:
+                enemies.add(new Goblin("Goblin 1"));
+                enemies.add(new Goblin("Goblin 2"));
+                enemies.add(new Goblin("Goblin 3"));
+                break;
         }
 
         for (Enemy enemy : enemies) {
@@ -82,12 +106,38 @@ public class GameInitialiser {
         return enemies;
     }
 
+    private List<Enemy> setupBackupLevel(String difficulty) {
+        List<Enemy> backupEnemies = new ArrayList<>();
+
+        switch (difficulty.toLowerCase()) {
+            case "hard":
+                backupEnemies.add(new Goblin("Backup Goblin 1"));
+                backupEnemies.add(new Wolf("Backup Wolf 1"));
+                backupEnemies.add(new Wolf("Backup Wolf 2"));
+                break;
+            case "medium":
+                backupEnemies.add(new Wolf("Backup Wolf 1"));
+                backupEnemies.add(new Wolf("Backup Wolf 2"));
+                break;
+            case "easy":
+            default:
+                // No backup spawn for easy
+                break;
+        }
+
+        for (Enemy enemy : backupEnemies) {
+            enemy.setObserver(observer);
+        }
+
+        return backupEnemies;
+    }
+
     private String askClassChoice() {
         while (true) {
             display("Choose class:");
             display("1. Warrior");
             display("2. Wizard");
-            String input = INPUT.nextLine().trim();
+            String input = UserInput.SCANNER.nextLine().trim();
 
             if ("1".equals(input) || "2".equals(input)) {
                 return input;
@@ -103,7 +153,7 @@ public class GameInitialiser {
             display("1. Easy");
             display("2. Medium");
             display("3. Hard");
-            String input = INPUT.nextLine().trim();
+            String input = UserInput.SCANNER.nextLine().trim();
 
             if ("1".equals(input)) {
                 return "Easy";
@@ -122,12 +172,69 @@ public class GameInitialiser {
     private String askNonEmpty(String prompt) {
         while (true) {
             display(prompt);
-            String input = INPUT.nextLine().trim();
+            String input = UserInput.SCANNER.nextLine().trim();
             if (!input.isEmpty()) {
                 return input;
             }
             display("Input cannot be empty.");
         }
+    }
+
+    private int readIntInRange(int min, int max) {
+        while (true) {
+            String line = UserInput.SCANNER.nextLine().trim();
+            try {
+                int value = Integer.parseInt(line);
+                if (value >= min && value <= max) {
+                    return value;
+                }
+            } catch (NumberFormatException ignored) {
+                // handled by retry message below
+            }
+            display("Invalid input. Enter a number from " + min + " to " + max + ".");
+        }
+    }
+
+    private void displayLoadingScreenDetails() {
+        display("================ LOADING SCREEN ================");
+        display("Available Players:");
+        displayPlayerAttributes();
+        display("Available Enemies:");
+        displayEnemyAttributes();
+        displayDifficultyDetails();
+    }
+
+    private void displayPlayerAttributes() {
+        Player warrior = new Warrior("Warrior");
+        Player wizard = new Wizard("Wizard");
+
+        display(formatEntityStats("Warrior", warrior));
+        display("  Special Skill: Shield Bash");
+        display(formatEntityStats("Wizard", wizard));
+        display("  Special Skill: Arcane Blast");
+    }
+
+    private void displayEnemyAttributes() {
+        Enemy goblin = new Goblin("Goblin");
+        Enemy wolf = new Wolf("Wolf");
+
+        display(formatEntityStats("Goblin", goblin));
+        display(formatEntityStats("Wolf", wolf));
+    }
+
+    private String formatEntityStats(String label, Entity entity) {
+        return label
+            + " - HP: " + entity.getMaxHp()
+            + ", ATK: " + entity.getAttack()
+            + ", DEF: " + entity.getDefense()
+            + ", SPD: " + entity.getSpeed();
+    }
+
+    private void displayDifficultyDetails() {
+        display("Difficulty Overview:");
+        display("Easy   - Initial: 3 Goblins");
+        display("Medium - Initial: 1 Goblin, 1 Wolf | Backup: 2 Wolf");
+        display("Hard   - Initial: 2 Goblins | Backup: 1 Goblin, 2 Wolf");
     }
 
     private void display(String message) {
