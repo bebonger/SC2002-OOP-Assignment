@@ -5,7 +5,7 @@ import sc2002.combat.ui.BattleObserver;
 
 public abstract class StatusEffect {
     protected String name;
-    protected int duration; // In turns
+    protected int duration; // in turns
 
     public StatusEffect(String name, int duration) {
         this.name = name;
