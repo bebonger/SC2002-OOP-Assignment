@@ -10,5 +10,5 @@ javac -d bin src/main/java/sc2002/combat/AppMain.java src/main/java/sc2002/comba
 
 **Execute:**
 ```bash
-java -cp bin AppMain
+java -cp bin sc2002/combat/AppMain
 ```
