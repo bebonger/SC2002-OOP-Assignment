@@ -4,7 +4,6 @@ import sc2002.combat.control.BattleController;
 import sc2002.combat.control.GameInitialiser;
 import sc2002.combat.ui.BattleObserver;
 import sc2002.combat.ui.CombatConsole;
-// TODO: add combatConsole class
 
 public class AppMain {
     public static void main(String[] args) {
