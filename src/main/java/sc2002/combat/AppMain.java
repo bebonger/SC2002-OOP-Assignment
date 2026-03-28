@@ -4,7 +4,6 @@ import sc2002.combat.control.BattleController;
 import sc2002.combat.control.GameInitialiser;
 import sc2002.combat.ui.BattleObserver;
 import sc2002.combat.ui.CombatConsole;
-// TODO: add combatConsole class
 
 public class AppMain {
     public static void main(String[] args) {
@@ -15,7 +14,11 @@ public class AppMain {
         BattleController engine = new BattleController(observer);
         GameInitialiser manager = new GameInitialiser(engine, observer);
         
-        // Start the game
-        manager.start();
+        // Start the game loop
+        boolean isAppRunning = true;
+        while (isAppRunning) {
+            manager.start();
+            isAppRunning = manager.askPostGameAction();
+        }
     }
 }

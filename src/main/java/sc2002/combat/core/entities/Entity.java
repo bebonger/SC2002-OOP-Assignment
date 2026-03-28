@@ -93,6 +93,9 @@ public abstract class Entity {
     // Getters and Setters
     public String getName() { return name; }
     public int getHp() { return hp; }
+    public int getMaxHp() { return maxHp; }
+    public int getAttack() { return attack; }
+    public int getDefense() { return defense; }
     public int getSpeed() { return speed; }
     public boolean canTakeAction() { return canTakeAction; }
     public void setCanTakeAction(boolean state) { this.canTakeAction = state; }
