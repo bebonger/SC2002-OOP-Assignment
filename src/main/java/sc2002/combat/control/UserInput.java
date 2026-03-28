@@ -4,7 +4,4 @@ import java.util.Scanner;
 
 public final class UserInput {
     public static final Scanner SCANNER = new Scanner(System.in);
-
-    private UserInput() {
-    }
 }

@@ -18,29 +18,70 @@ import sc2002.combat.ui.BattleObserver;
 public class GameInitialiser {
     private final BattleController engine;
     private final BattleObserver observer;
+    
+    // Store settings for replay
+    private String lastPlayerName;
+    private String lastClassChoice;
+    private List<Integer> lastItemChoices;
+    private String lastDifficulty;
 
     public GameInitialiser(BattleController engine, BattleObserver observer) {
         this.engine = engine;
         this.observer = observer;
+        this.lastItemChoices = new ArrayList<>();
     }
 
     public void start() {
         displayLoadingScreenDetails();
 
-        String playerName = askNonEmpty("Enter your player name:");
-        String classChoice = askClassChoice();
+        lastPlayerName = askNonEmpty("Enter your player name:");
+        lastClassChoice = askClassChoice();
 
-        Player player = setupPlayer(playerName, classChoice);
-        chooseStarterItem(player);
+        Player player = setupPlayer(lastPlayerName, lastClassChoice);
+        chooseStarterItem(player, false);
 
-        String difficulty = askDifficulty();
-        List<Enemy> initialEnemies = setupLevel(difficulty);
-        List<Enemy> backupEnemies = setupBackupLevel(difficulty);
+        lastDifficulty = askDifficulty();
+        List<Enemy> initialEnemies = setupLevel(lastDifficulty);
+        List<Enemy> backupEnemies = setupBackupLevel(lastDifficulty);
 
         List<Entity> battleInitialEnemies = new ArrayList<>(initialEnemies);
         List<Entity> battleBackupEnemies = new ArrayList<>(backupEnemies);
         
         engine.startBattle(player, battleInitialEnemies, battleBackupEnemies);
+    }
+    
+    public void startReplay() {
+        Player player = setupPlayer(lastPlayerName, lastClassChoice);
+        chooseStarterItem(player, true);
+
+        List<Enemy> initialEnemies = setupLevel(lastDifficulty);
+        List<Enemy> backupEnemies = setupBackupLevel(lastDifficulty);
+
+        List<Entity> battleInitialEnemies = new ArrayList<>(initialEnemies);
+        List<Entity> battleBackupEnemies = new ArrayList<>(backupEnemies);
+        
+        engine.startBattle(player, battleInitialEnemies, battleBackupEnemies);
+    }
+    
+    public boolean askPostGameAction() {
+        while (true) {
+            display("What would you like to do next?");
+            display("1. Replay with the same settings");
+            display("2. Start a new game (return to home screen)");
+            display("3. Exit");
+            
+            String input = UserInput.SCANNER.nextLine().trim();
+            if ("1".equals(input)) {
+                startReplay();
+                return true;
+            } else if ("2".equals(input)) {
+                return true; // Returns true to trigger a normal start() again
+            } else if ("3".equals(input)) {
+                display("Exiting game. Thanks for playing!");
+                return false;
+            }
+            display("Invalid choice. Enter 1, 2, or 3.");
+        }
     }
     
     private Player setupPlayer(String playerName, String classChoice) {
@@ -55,25 +96,38 @@ public class GameInitialiser {
         return player;
     }
 
-    private void chooseStarterItem(Player player) {
-        display("Choose 2 starter items (Duplicates are allowed):");
-        display("1. Health Potion - Restore 100 HP");
-        display("2. Power Stone - Trigger special skill immediately");
-        display("3. Smoke Bomb - Dodge attacks for 2 turns");
+    private void chooseStarterItem(Player player, boolean isReplay) {
+        if (!isReplay) {
+            lastItemChoices.clear();
+            display("Choose 2 starter items (Duplicates are allowed):");
+            display("1. Health Potion - Restore 100 HP");
+            display("2. Power Stone - Trigger special skill immediately");
+            display("3. Smoke Bomb - Dodge attacks for 2 turns");
 
-        for (int i = 1; i <= 2; i++) {
-            display("Select Item " + i + ":");
-            int choice = readIntInRange(1, 3);
-            if (choice == 1) {
-                player.getInventory().add(new PotionItem());
-                display("Health Potion added to inventory.");
-            } else if (choice == 2) {
-                player.getInventory().add(new PowerStoneItem());
-                display("Power Stone added to inventory.");
-            } else {
-                player.getInventory().add(new SmokeBombItem());
-                display("Smoke Bomb added to inventory.");
+            for (int i = 1; i <= 2; i++) {
+                display("Select Item " + i + ":");
+                int choice = readIntInRange(1, 3);
+                lastItemChoices.add(choice);
+                addItemToInventory(player, choice);
             }
+        } else {
+            // Restore items for replay
+            for (int choice : lastItemChoices) {
+                addItemToInventory(player, choice);
+            }
+        }
+    }
+    
+    private void addItemToInventory(Player player, int choice) {
+        if (choice == 1) {
+            player.getInventory().add(new PotionItem());
+            display("Health Potion added to inventory.");
+        } else if (choice == 2) {
+            player.getInventory().add(new PowerStoneItem());
+            display("Power Stone added to inventory.");
+        } else {
+            player.getInventory().add(new SmokeBombItem());
+            display("Smoke Bomb added to inventory.");
         }
     }
 
@@ -199,7 +253,7 @@ public class GameInitialiser {
         display("================ LOADING SCREEN ================");
         display("Available Players:");
         displayPlayerAttributes();
-        display("Available Enemies:");
+        display(" \nAvailable Enemies:");
         displayEnemyAttributes();
         displayDifficultyDetails();
     }
@@ -231,7 +285,7 @@ public class GameInitialiser {
     }
 
     private void displayDifficultyDetails() {
-        display("Difficulty Overview:");
+        display("\nDifficulty Overview:");
         display("Easy   - Initial: 3 Goblins");
         display("Medium - Initial: 1 Goblin, 1 Wolf | Backup: 2 Wolf");
         display("Hard   - Initial: 2 Goblins | Backup: 1 Goblin, 2 Wolf");

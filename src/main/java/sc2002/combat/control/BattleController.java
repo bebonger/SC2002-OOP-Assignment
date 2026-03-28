@@ -63,8 +63,6 @@ public class BattleController {
             
             turnStrategy.sort(entities);
             
-            // Create a copy of the list for iteration to avoid ConcurrentModificationException
-            // if backup spawns add to the original entities list mid-round
             List<Entity> currentRoundEntities = new ArrayList<>(entities);
             
             for (Entity current : currentRoundEntities) {
@@ -83,14 +81,10 @@ public class BattleController {
                         observer.displayMessage("Backup enemies have spawned!");
                     }
                     
-                    // Mark backup enemies as having taken their turn for this round
-                    // so they don't attack immediately upon spawning
                     for (Entity backup : backupEnemies) {
                         backup.setCanTakeAction(false);
                     }
                     
-                    // Break out of the current round's loop so the newly added entities
-                    // can be sorted properly into the next round's turn order
                     break;
                 }
 

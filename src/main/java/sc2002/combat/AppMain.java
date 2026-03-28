@@ -14,7 +14,11 @@ public class AppMain {
         BattleController engine = new BattleController(observer);
         GameInitialiser manager = new GameInitialiser(engine, observer);
         
-        // Start the game
-        manager.start();
+        // Start the game loop
+        boolean isAppRunning = true;
+        while (isAppRunning) {
+            manager.start();
+            isAppRunning = manager.askPostGameAction();
+        }
     }
 }
