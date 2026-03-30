@@ -4,7 +4,7 @@ public class DefenseBoostEffect extends StatusEffect {
     public DefenseBoostEffect() { super("Defending", 1); }
 
     @Override
-    public int applyDamageModifier(int damage) {
+    public int applyIncomingDamageModifier(int damage) {
         return damage / 2; // 50% reduction
     }
 }

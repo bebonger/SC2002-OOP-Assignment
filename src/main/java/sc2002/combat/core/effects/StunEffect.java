@@ -9,6 +9,8 @@ public class StunEffect extends StatusEffect {
     @Override
     public void onTurnStart(Entity owner, BattleContext context) {
         super.onTurnStart(owner, context);
-        owner.setCanTakeAction(false);
+        if (!isExpired()) {
+          owner.setCanTakeAction(false);
+        }
     }
 }
