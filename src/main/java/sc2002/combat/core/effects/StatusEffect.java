@@ -1,7 +1,7 @@
 package sc2002.combat.core.effects;
 
 import sc2002.combat.core.entities.Entity;
-import sc2002.combat.ui.BattleObserver;
+import sc2002.combat.ui.IBattleObserver;
 
 public abstract class StatusEffect {
     protected String name;
@@ -12,7 +12,7 @@ public abstract class StatusEffect {
         this.duration = duration;
     }
 
-    public void onTurnStart(Entity owner, BattleObserver observer) {
+    public void onTurnStart(Entity owner, IBattleObserver observer) {
         duration--;
     }
 

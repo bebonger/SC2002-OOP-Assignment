@@ -2,7 +2,6 @@ package sc2002.combat.control;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import sc2002.combat.core.entities.Enemy;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Goblin;
@@ -13,11 +12,11 @@ import sc2002.combat.core.entities.Wolf;
 import sc2002.combat.core.items.PotionItem;
 import sc2002.combat.core.items.PowerStoneItem;
 import sc2002.combat.core.items.SmokeBombItem;
-import sc2002.combat.ui.BattleObserver;
+import sc2002.combat.ui.IBattleObserver;
 
 public class GameInitialiser {
     private final BattleController engine;
-    private final BattleObserver observer;
+    private final IBattleObserver observer;
     
     // Store settings for replay
     private String lastPlayerName;
@@ -25,7 +24,7 @@ public class GameInitialiser {
     private List<Integer> lastItemChoices;
     private String lastDifficulty;
 
-    public GameInitialiser(BattleController engine, BattleObserver observer) {
+    public GameInitialiser(BattleController engine, IBattleObserver observer) {
         this.engine = engine;
         this.observer = observer;
         this.lastItemChoices = new ArrayList<>();

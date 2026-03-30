@@ -2,11 +2,11 @@ package sc2002.combat.core.actions;
 
 import sc2002.combat.core.effects.StunEffect;
 import sc2002.combat.core.entities.Entity;
-import sc2002.combat.ui.BattleObserver;
+import sc2002.combat.ui.IBattleObserver;
 
-public class ShieldBashSkill implements SpecialSkillAction {
+public class ShieldBashSkill implements ISpecialSkillAction {
     @Override
-    public void execute(Entity attacker, Entity target, BattleObserver observer) {
+    public void execute(Entity attacker, Entity target, IBattleObserver observer) {
         int damage = 35;
         target.takeDamage(damage);
 

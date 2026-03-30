@@ -2,15 +2,15 @@ package sc2002.combat.control;
 
 import java.util.ArrayList;
 import java.util.List;
-import sc2002.combat.core.actions.Action;
 import sc2002.combat.core.actions.BasicAttackAction;
 import sc2002.combat.core.actions.DefendAction;
+import sc2002.combat.core.actions.IAction;
 import sc2002.combat.core.actions.ItemAction;
 import sc2002.combat.core.entities.Enemy;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
-import sc2002.combat.core.items.Item;
-import sc2002.combat.ui.BattleObserver;
+import sc2002.combat.core.items.IItem;
+import sc2002.combat.ui.IBattleObserver;
 
 public class BattleController {
     private enum BattleOutcome {
@@ -21,12 +21,12 @@ public class BattleController {
 
     private final List<Entity> entities;
     private final List<Entity> backupEnemies;
-    private final BattleObserver observer;
-    private final TurnOrderStrategy turnStrategy;
+    private final IBattleObserver observer;
+    private final ITurnOrderStrategy turnStrategy;
     private int roundCount;
     private boolean backupSpawned;
 
-    public BattleController(BattleObserver observer) {
+    public BattleController(IBattleObserver observer) {
         this.observer = observer;
         this.entities = new ArrayList<>();
         this.backupEnemies = new ArrayList<>();
@@ -181,7 +181,7 @@ public class BattleController {
                 return;
             }
 
-            Action action = enemy.decideAction(target);
+            IAction action = enemy.decideAction(target);
             if (action != null) {
                 action.execute(enemy, target, observer);
             }
@@ -271,7 +271,7 @@ public class BattleController {
     }
 
     private int chooseItemIndex(Player player) {
-        List<Item> inventory = player.getInventory();
+        List<IItem> inventory = player.getInventory();
         if (observer != null) {
             observer.displayMessage("Choose item:");
             for (int i = 0; i < inventory.size(); i++) {
