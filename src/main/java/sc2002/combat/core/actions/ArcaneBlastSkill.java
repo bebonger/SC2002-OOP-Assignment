@@ -15,8 +15,6 @@ public class ArcaneBlastSkill implements ISpecialSkillAction {
 
     @Override
     public void execute(Entity attacker, Entity ignored, IBattleObserver observer) {
-        execute(attacker, ignored, observer);
-
         int damage = 50;
         
         for (Entity e : entityList) {
