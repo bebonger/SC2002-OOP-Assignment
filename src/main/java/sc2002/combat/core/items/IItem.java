@@ -6,5 +6,6 @@ import sc2002.combat.core.utils.BattleContext;
 
 public interface IItem {
     void use(Player user, Entity target, BattleContext context);
+
     String getName();
 }

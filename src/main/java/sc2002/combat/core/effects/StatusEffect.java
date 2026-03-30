@@ -16,14 +16,27 @@ public abstract class StatusEffect {
         duration--;
     }
 
-    public int applyAttackModifier(int currentAtk) { return currentAtk; }
-    public int applyDefenseModifier(int currentDef) { return currentDef; }
-    public int applyDamageModifier(int incomingDamage) { return incomingDamage; }
+    public int applyAttackModifier(int currentAtk) {
+        return currentAtk;
+    }
+
+    public int applyDefenseModifier(int currentDef) {
+        return currentDef;
+    }
+
+    public int applyDamageModifier(int incomingDamage) {
+        return incomingDamage;
+    }
 
     public boolean isExpired() {
         return duration <= 0;
     }
 
-    public String getName() { return name; }
-    public int getDuration() { return duration; }
+    public String getName() {
+        return name;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
 }

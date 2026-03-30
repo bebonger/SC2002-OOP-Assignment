@@ -9,7 +9,8 @@ public class ArcaneBlastSkill implements ISpecialSkillAction {
     @Override
     public void execute(Entity attacker, Entity ignored, BattleContext context) {
         for (Entity e : context.getEntities()) {
-            if (!(e instanceof Enemy)) continue;
+            if (!(e instanceof Enemy))
+                continue;
 
             if (e.isAlive()) {
                 int damage = Math.max(1, attacker.getEffectiveAttack());

@@ -30,12 +30,11 @@ public class CombatConsole implements IBattleObserver {
         }
 
         System.out.println(
-            target.getName()
-            + " takes "
-            + damage
-            + " damage. HP now: "
-            + currentHP
-        );
+                target.getName()
+                        + " takes "
+                        + damage
+                        + " damage. HP now: "
+                        + currentHP);
 
         if (isEliminated) {
             System.out.println(target.getName() + " is eliminated.");
@@ -63,7 +62,8 @@ public class CombatConsole implements IBattleObserver {
             System.out.println("Statistics: Remaining HP: " + remainingDetail + " | Total Rounds: " + roundCount);
         } else {
             System.out.println("Defeated. Don't give up, try again!");
-            System.out.println("Statistics: Enemies remaining: " + remainingDetail + " | Total Rounds Survived: " + roundCount);
+            System.out.println(
+                    "Statistics: Enemies remaining: " + remainingDetail + " | Total Rounds Survived: " + roundCount);
         }
     }
 

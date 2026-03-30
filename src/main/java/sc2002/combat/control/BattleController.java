@@ -40,23 +40,23 @@ public class BattleController {
     public void startBattle(Player player, List<Entity> initialEnemies, List<Entity> backupEnemies) {
         this.entities.clear();
         this.backupEnemies.clear();
-        
+
         this.entities.add(player);
         this.entities.addAll(initialEnemies);
-        
+
         if (backupEnemies != null) {
             this.backupEnemies.addAll(backupEnemies);
         }
-        
+
         this.roundCount = 0;
         this.backupSpawned = false;
-        
+
         runBattleLoop();
     }
 
     public void runBattleLoop() {
         boolean isBattleOngoing = true;
-        
+
         while (isBattleOngoing) {
             roundCount++;
 
@@ -64,16 +64,16 @@ public class BattleController {
             if (observer != null) {
                 observer.onRoundStart(roundCount);
             }
-            
+
             turnStrategy.sort(entities);
-            
+
             List<Entity> currentRoundEntities = new ArrayList<>(entities);
-            
+
             for (Entity current : currentRoundEntities) {
                 if (!current.isAlive()) {
                     continue;
                 }
-            
+
                 processRound(current, context);
 
                 BattleOutcome outcome = evaluateBattleOutcome(current);
@@ -84,11 +84,11 @@ public class BattleController {
                     if (observer != null) {
                         observer.displayMessage("Backup enemies have spawned!");
                     }
-                    
+
                     for (Entity backup : backupEnemies) {
                         backup.setCanTakeAction(false);
                     }
-                    
+
                     break;
                 }
 
@@ -102,14 +102,16 @@ public class BattleController {
                                 if (e == null) {
                                     continue;
                                 }
-                                if (e instanceof Player) remainingDetail = e.getHp(); 
+                                if (e instanceof Player)
+                                    remainingDetail = e.getHp();
                             }
                         } else {
                             for (Entity e : entities) {
                                 if (e == null) {
                                     continue;
                                 }
-                                if (!(e instanceof Player) && e.isAlive()) remainingDetail++; 
+                                if (!(e instanceof Player) && e.isAlive())
+                                    remainingDetail++;
                             }
                         }
                         observer.onGameOver(playerAlive, roundCount, remainingDetail);
@@ -121,9 +123,10 @@ public class BattleController {
                 try {
                     TimeUnit.MILLISECONDS.sleep(500);
                 } catch (InterruptedException ex) {
-                    System.getLogger(BattleController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                    System.getLogger(BattleController.class.getName()).log(System.Logger.Level.ERROR, (String) null,
+                            ex);
                 }
-                
+
             }
         }
     }
@@ -210,12 +213,13 @@ public class BattleController {
 
             int actionChoice = readInt(1, 4);
             switch (actionChoice) {
-                case 1 ->{
+                case 1 -> {
                     Entity target = chooseEnemyTarget();
                     if (target != null) {
                         new BasicAttackAction().execute(player, target, context);
                         return;
-                    }       break;
+                    }
+                    break;
                 }
                 case 2 -> {
                     new DefendAction().execute(player, player, context);

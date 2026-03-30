@@ -13,5 +13,7 @@ public class SmokeBombItem implements IItem {
     }
 
     @Override
-    public String getName() { return "Smoke Bomb"; }
+    public String getName() {
+        return "Smoke Bomb";
+    }
 }

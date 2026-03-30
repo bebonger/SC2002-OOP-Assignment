@@ -27,8 +27,8 @@ public abstract class Player extends Entity {
     public void useSpecialSkill(Entity target, BattleContext context) {
         if (this.currentCooldown == 0) {
             this.specialSkill.execute(this, target, context);
-            this.currentCooldown = MAX_COOLDOWN; 
-        } 
+            this.currentCooldown = MAX_COOLDOWN;
+        }
     }
 
     public void updateCooldown() {
@@ -42,7 +42,15 @@ public abstract class Player extends Entity {
     }
 
     // Getters and Setters
-    public List<IItem> getInventory() { return inventory; }
-    public int getCurrentCooldown() { return currentCooldown; }
-    public ISpecialSkillAction getSpecialSkill() { return specialSkill; }
+    public List<IItem> getInventory() {
+        return inventory;
+    }
+
+    public int getCurrentCooldown() {
+        return currentCooldown;
+    }
+
+    public ISpecialSkillAction getSpecialSkill() {
+        return specialSkill;
+    }
 }
