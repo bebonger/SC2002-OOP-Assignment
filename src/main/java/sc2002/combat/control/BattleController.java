@@ -3,6 +3,7 @@ package sc2002.combat.control;
 import java.util.ArrayList;
 import java.util.List;
 import sc2002.combat.core.actions.Action;
+import sc2002.combat.core.actions.ArcaneBlastSkill;
 import sc2002.combat.core.actions.BasicAttackAction;
 import sc2002.combat.core.actions.DefendAction;
 import sc2002.combat.core.actions.ItemAction;
@@ -70,7 +71,8 @@ public class BattleController {
                     continue;
                 }
                 
-                processTurn(current);
+                current.onTurnStart();
+                processRound(current);
 
                 BattleOutcome outcome = evaluateBattleOutcome(current);
                 if (outcome == BattleOutcome.PLAYER_WIN && !backupSpawned && !backupEnemies.isEmpty()) {
@@ -149,7 +151,7 @@ public class BattleController {
         return BattleOutcome.ENEMY_WIN;
     }
 
-    private void processTurn(Entity current) {
+    private void processRound(Entity current) {
         if (current == null || !current.isAlive()) {
             return;
         }
@@ -159,9 +161,6 @@ public class BattleController {
         if (!current.canTakeAction() || !current.isAlive()) {
             if (observer != null) {
                 observer.displayMessage(current.getName() + " is unable to act this turn.");
-            }
-            if (current instanceof Player player) {
-                player.updateCooldown();
             }
             return;
         }
@@ -189,8 +188,6 @@ public class BattleController {
     }
 
     private void processPlayerTurn(Player player) {
-        player.updateCooldown();
-
         while (true) {
             if (observer != null) {
                 observer.displayMessage("Choose action:");
@@ -227,7 +224,11 @@ public class BattleController {
                             continue;
                         }       Entity target = chooseEnemyTarget();
                         if (target != null) {
-                            player.useSpecialSkill(target);
+                            if (player.getSpecialSkill() instanceof ArcaneBlastSkill blast) {
+                                blast.setTargets(this.entities);
+                                blast.execute(player, null, observer);
+                            } else
+                                player.useSpecialSkill(target);
                             return;
                         }       break;
                     }

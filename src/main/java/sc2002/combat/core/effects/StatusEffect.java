@@ -12,9 +12,7 @@ public abstract class StatusEffect {
         this.duration = duration;
     }
 
-    public void onTurnStart(Entity owner, BattleObserver observer) {
-        duration--;
-    }
+    public void onTurnStart(Entity owner, BattleObserver observer) { duration--; }
 
     public int applyAttackModifier(int currentAtk) { return currentAtk; }
     public int applyDefenseModifier(int currentDef) { return currentDef; }

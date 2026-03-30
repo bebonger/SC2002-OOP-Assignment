@@ -13,7 +13,7 @@ public interface BattleObserver {
     void onStatusEffectApplied(Entity entity, String effectName, int duration);
     void onStatusEffectExpired(Entity entity, String effectName);
 
-    void onItemUsed(Entity user, String itemName);
+    void onItemUsed(Entity user, String itemName, Entity target);
     void displayMessage(String message);
         
 }

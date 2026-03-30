@@ -9,10 +9,11 @@ public class BasicAttackAction implements Action {
         // ATK - DEF
         // Using getEffective stats to account for buffs/debuffs
         int damage = Math.max(1, attacker.getEffectiveAttack() - target.getEffectiveDefense());
-        target.takeDamage(damage);
         
         if (observer != null) {
             observer.onActionExecuted(attacker, "Basic Attack", target);
         }
+        
+        target.takeDamage(damage);
     }
 }

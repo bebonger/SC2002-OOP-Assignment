@@ -2,7 +2,6 @@ package sc2002.combat.control;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import sc2002.combat.core.entities.Enemy;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Goblin;

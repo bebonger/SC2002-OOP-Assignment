@@ -7,8 +7,8 @@ import sc2002.combat.ui.BattleObserver;
 public class PotionItem implements Item {
     @Override
     public void use(Player user, Entity target, BattleObserver observer) {
-        user.heal(100);
-        observer.onItemUsed(user, "Health Potion");
+        target.heal(100);
+        observer.onItemUsed(user, "Health Potion", target);
     }
 
     @Override

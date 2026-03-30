@@ -30,6 +30,12 @@ public abstract class Player extends Entity {
         } 
     }
 
+    @Override
+    public void onTurnStart() {
+        super.onTurnStart();
+        updateCooldown();
+    }
+
     public void updateCooldown() {
         if (currentCooldown > 0) {
             currentCooldown--;
