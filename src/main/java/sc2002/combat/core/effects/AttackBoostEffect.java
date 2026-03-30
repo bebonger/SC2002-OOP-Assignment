@@ -3,6 +3,8 @@ package sc2002.combat.core.effects;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.ui.BattleObserver;
 
+// we technically don't need this class because ArcaneBlastSkill changes ONLY Wizard's base attack
+// however this could be potentially implemented through an item like an AttackBoostPotion that affects all types of entities.
 public class AttackBoostEffect extends StatusEffect {
     private int boostAmount;
 
