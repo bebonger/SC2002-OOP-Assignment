@@ -46,8 +46,13 @@ public class CombatConsole implements IBattleObserver {
         String attackerName = attacker == null ? "Unknown" : attacker.getName();
         String targetName = target == null ? "Unknown" : target.getName();
         String action = actionName == null || actionName.isBlank() ? "Action" : actionName;
-
-        System.out.println(attackerName + " uses " + action + " on " + targetName + ".");
+        
+        System.out.println(
+            attackerName + 
+            " uses " + 
+            action + 
+            (target == null ? "" : (" on " + targetName + "."))
+        );
     }
 
     @Override
