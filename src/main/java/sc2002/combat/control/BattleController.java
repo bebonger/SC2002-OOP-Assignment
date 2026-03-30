@@ -7,10 +7,12 @@ import sc2002.combat.core.actions.BasicAttackAction;
 import sc2002.combat.core.actions.DefendAction;
 import sc2002.combat.core.actions.IAction;
 import sc2002.combat.core.actions.ItemAction;
+import sc2002.combat.core.effects.SmokeBombEffect;
 import sc2002.combat.core.entities.Enemy;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.items.IItem;
+import sc2002.combat.core.items.SmokeBombItem;
 import sc2002.combat.ui.IBattleObserver;
 
 public class BattleController {
@@ -199,30 +201,51 @@ public class BattleController {
 
             int actionChoice = readInt(1, 4);
             switch (actionChoice) {
-                case 1:
-                    {
+                case 1 ->                     {
                         Entity target = chooseEnemyTarget();
                         if (target != null) {
                             new BasicAttackAction().execute(player, target, observer);
                             return;
-                        }       break;
-                    }
-                case 2:
+                        }                          }
+                case 2 -> {
                     new DefendAction().execute(player, player, observer);
                     return;
-                case 3:
-                    {
+                }
+                case 3 ->                     {
                         if (player.getSpecialSkill() == null) {
                             if (observer != null) {
                                 observer.displayMessage("No special skill available.");
                             }
                             continue;
-                        }       if (player.getCurrentCooldown() > 0) {
+                        }
+
+                        if (player.getCurrentCooldown() > 0) {
                             if (observer != null) {
                                 observer.displayMessage("Special skill is on cooldown.");
                             }
                             continue;
-                        }       Entity target = chooseEnemyTarget();
+                        }
+
+                        if (player.getSpecialSkill() instanceof ArcaneBlastSkill arcaneBlastSkill) {
+                            List<Entity> targets = getAliveEnemies();
+                            if (targets.isEmpty()) {
+                                if (observer != null) {
+                                    observer.displayMessage("No enemy targets available.");
+                                }
+                                continue;
+                            }
+
+                            for (Entity enemy : targets) {
+                                if (enemy != null && enemy.isAlive()) {
+                                    arcaneBlastSkill.execute(player, enemy, observer);
+                                }
+                            }
+
+                            player.startCooldown();
+                            return;
+                        }
+
+                        Entity target = chooseEnemyTarget();
                         if (target != null) {
                             if (player.getSpecialSkill() instanceof ArcaneBlastSkill blast) {
                                 blast.setTargets(this.entities);
@@ -230,21 +253,50 @@ public class BattleController {
                             } else
                                 player.useSpecialSkill(target);
                             return;
-                        }       break;
+                        }
+
                     }
-                default:
-                    {
+                default ->                     {
                         if (player.getInventory().isEmpty()) {
                             if (observer != null) {
                                 observer.displayMessage("No items in inventory.");
                             }
                             continue;
-                        }       int itemIndex = chooseItemIndex(player);
+                        }
+
+                        int itemIndex = chooseItemIndex(player);
+                        if (itemIndex < 0) {
+                            continue;
+                        }
+                        IItem selectedItem = player.getInventory().get(itemIndex);
+
+                        if (isSmokeBomb(selectedItem)) {
+                            List<Entity> aliveEnemies = getAliveEnemies();
+                            if (aliveEnemies.isEmpty()) {
+                                if (observer != null) {
+                                    observer.displayMessage("No enemies to affect.");
+                                }
+                                continue;
+                            }
+
+                            player.getInventory().remove(itemIndex);
+                            for (Entity enemy : aliveEnemies) {
+                                if (!enemy.hasStatusEffect("Stunned")) {
+                                    enemy.addStatusEffect(new SmokeBombEffect(2));
+                                    if (observer != null) {
+                                        observer.onItemUsed(player, selectedItem.getName(), enemy);
+                                    }
+                                }
+                            }
+                            return;
+                        }
+
                         Entity target = chooseItemTarget();
                         if (target != null) {
                             new ItemAction(itemIndex).execute(player, target, observer);
                             return;
-                        }       break;
+                        }
+
                     }
             }
         }
@@ -265,9 +317,13 @@ public class BattleController {
                 Entity enemy = aliveEnemies.get(i);
                 observer.displayMessage((i + 1) + ". " + enemy.getName() + " (HP: " + enemy.getHp() + ")");
             }
+            observer.displayMessage((aliveEnemies.size() + 1) + ". Back");
         }
 
-        int targetChoice = readInt(1, aliveEnemies.size());
+        int targetChoice = readInt(1, aliveEnemies.size() + 1);
+        if (targetChoice == aliveEnemies.size() + 1) {
+            return null;
+        }
         return aliveEnemies.get(targetChoice - 1);
     }
 
@@ -278,10 +334,21 @@ public class BattleController {
             for (int i = 0; i < inventory.size(); i++) {
                 observer.displayMessage((i + 1) + ". " + inventory.get(i).getName());
             }
+            observer.displayMessage((inventory.size() + 1) + ". Back");
         }
 
-        int itemChoice = readInt(1, inventory.size());
+        int itemChoice = readInt(1, inventory.size() + 1);
+        if (itemChoice == inventory.size() + 1) {
+            return -1;
+        }
         return itemChoice - 1;
+    }
+
+    private boolean isSmokeBomb(IItem item) {
+        if (item == null) {
+            return false;
+        }
+        return item instanceof SmokeBombItem || "Smoke Bomb".equals(item.getName());
     }
 
     private Entity chooseItemTarget() {
@@ -298,9 +365,13 @@ public class BattleController {
                 Entity enemy = aliveEnemies.get(i);
                 observer.displayMessage((i + 2) + ". " + enemy.getName() + " (HP: " + enemy.getHp() + ")");
             }
+            observer.displayMessage((aliveEnemies.size() + 2) + ". Back");
         }
 
-        int targetChoice = readInt(1, aliveEnemies.size() + 1);
+        int targetChoice = readInt(1, aliveEnemies.size() + 2);
+        if (targetChoice == aliveEnemies.size() + 2) {
+            return null;
+        }
         if (targetChoice == 1) {
             return player;
         }
