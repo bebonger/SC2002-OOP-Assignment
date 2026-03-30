@@ -3,7 +3,7 @@ package sc2002.combat.core.entities;
 import java.util.ArrayList;
 import java.util.List;
 import sc2002.combat.core.effects.StatusEffect;
-import sc2002.combat.ui.IBattleObserver;
+import sc2002.combat.core.utils.BattleContext;
 
 public abstract class Entity {
     protected String name;
@@ -14,7 +14,6 @@ public abstract class Entity {
     protected int speed;
     
     protected List<StatusEffect> statusEffects;
-    protected IBattleObserver observer;
     protected boolean canTakeAction = true;
 
     public Entity(String name, int hp, int attack, int defense, int speed) {
@@ -27,11 +26,6 @@ public abstract class Entity {
         this.statusEffects = new ArrayList<>();
     }
 
-    // Observer subscription
-    public void setObserver(IBattleObserver observer) {
-        this.observer = observer;
-    }
-
     public void takeDamage(int rawDamage) {
         int finalDamage = rawDamage;
 
@@ -42,8 +36,6 @@ public abstract class Entity {
 
         // clamp hp to 0
         this.hp = Math.max(0, this.hp - finalDamage);
-
-        if (observer != null) observer.onDamageDealt(this, finalDamage, this.hp, !isAlive());
     }
 
     public void heal(int amount) {
@@ -55,23 +47,19 @@ public abstract class Entity {
     }
 
     // Status Effect Lifecycle
-    public void updateStatusEffects() {
+    public void updateStatusEffects(BattleContext context) {
         for (int i = statusEffects.size() - 1; i >= 0; i--) {
             StatusEffect effect = statusEffects.get(i);
-            effect.onTurnStart(this, observer);
+            effect.onTurnStart(this, context);
             
             if (effect.isExpired()) {
                 statusEffects.remove(i);
-                if (observer != null) observer.onStatusEffectExpired(this, effect.getName());
             }
         }
     }
 
     public void addStatusEffect(StatusEffect effect) {
         this.statusEffects.add(effect);
-        if (observer != null) {
-            observer.onStatusEffectApplied(this, effect.getName(), effect.getDuration());
-        }
     }
 
     public int getEffectiveAttack() {

@@ -91,7 +91,6 @@ public class GameInitialiser {
             player = new Warrior(playerName);
         }
 
-        player.setObserver(observer);
         return player;
     }
 
@@ -152,10 +151,6 @@ public class GameInitialiser {
                 break;
         }
 
-        for (Enemy enemy : enemies) {
-            enemy.setObserver(observer);
-        }
-
         return enemies;
     }
 
@@ -176,10 +171,6 @@ public class GameInitialiser {
             default:
                 // No backup spawn for easy
                 break;
-        }
-
-        for (Enemy enemy : backupEnemies) {
-            enemy.setObserver(observer);
         }
 
         return backupEnemies;
