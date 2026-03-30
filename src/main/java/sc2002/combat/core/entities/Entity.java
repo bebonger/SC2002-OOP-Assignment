@@ -27,15 +27,12 @@ public abstract class Entity {
     }
 
     public void takeDamage(int rawDamage) {
-        // First, reduce incoming damage by effective defense.
-        int finalDamage = Math.max(0, rawDamage - getEffectiveDefense());
+        int finalDamage = rawDamage;
 
-        // Then let status effects further modify incoming damage.
+        // let status effects modify incoming damage
         for (StatusEffect effect : statusEffects) {
-            finalDamage = effect.applyIncomingDamageModifier(finalDamage);
+            finalDamage = effect.applyDamageModifier(finalDamage);
         }
-
-        finalDamage = Math.max(0, finalDamage);
 
         // clamp hp to 0
         this.hp = Math.max(0, this.hp - finalDamage);
@@ -62,19 +59,6 @@ public abstract class Entity {
     }
 
     public void addStatusEffect(StatusEffect effect) {
-        if (effect == null) {
-            return;
-        }
-
-        String newEffect = effect.getName();
-        if ("Smoked".equals(newEffect) && hasStatusEffect("Stunned")) {
-            return;
-        }
-
-        if ("Stunned".equals(newEffect)) {
-            statusEffects.removeIf(existing -> "Smoked".equals(existing.getName()));
-        }
-
         this.statusEffects.add(effect);
     }
 
@@ -92,15 +76,6 @@ public abstract class Entity {
 
     public void increaseBaseAttack(int amount) {
         this.attack += amount;
-    }
-
-    public boolean hasStatusEffect(String effectName) {
-        for (StatusEffect effect : statusEffects) {
-            if (effectName.equals(effect.getName())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     // Getters and Setters

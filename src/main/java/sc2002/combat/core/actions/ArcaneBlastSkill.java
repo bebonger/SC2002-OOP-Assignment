@@ -13,7 +13,7 @@ public class ArcaneBlastSkill implements ISpecialSkillAction {
 
             if (e.isAlive()) {
                 int damage = Math.max(1, attacker.getEffectiveAttack() - e.getEffectiveDefense());
-
+                
                 e.takeDamage(damage);
 
                 context.getObserver().onActionExecuted(attacker, "Arcane Blast", e);
