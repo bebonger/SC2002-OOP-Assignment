@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import sc2002.combat.core.actions.ISpecialSkillAction;
 import sc2002.combat.core.items.IItem;
+import sc2002.combat.core.utils.BattleContext;
 
 public abstract class Player extends Entity {
     protected List<IItem> inventory;
@@ -16,16 +17,16 @@ public abstract class Player extends Entity {
         this.inventory = new ArrayList<>();
     }
 
-    public void useItem(int index, Entity target) {
+    public void useItem(int index, Entity target, BattleContext context) {
         if (index >= 0 && index < inventory.size()) {
             IItem item = inventory.remove(index);
-            item.use(this, target, observer);
+            item.use(this, target, context);
         }
     }
 
-    public void useSpecialSkill(Entity target) {
+    public void useSpecialSkill(Entity target, BattleContext context) {
         if (this.currentCooldown == 0) {
-            this.specialSkill.execute(this, target, this.observer);
+            this.specialSkill.execute(this, target, context);
             this.currentCooldown = MAX_COOLDOWN; 
         } 
     }

@@ -3,7 +3,6 @@ package sc2002.combat.control;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import sc2002.combat.core.actions.ArcaneBlastSkill;
 import sc2002.combat.core.actions.BasicAttackAction;
 import sc2002.combat.core.actions.DefendAction;
 import sc2002.combat.core.actions.IAction;
@@ -14,6 +13,7 @@ import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.items.IItem;
 import sc2002.combat.core.items.SmokeBombItem;
+import sc2002.combat.core.utils.BattleContext;
 import sc2002.combat.ui.IBattleObserver;
 
 public class BattleController {
@@ -61,6 +61,8 @@ public class BattleController {
 
         while (isBattleOngoing) {
             roundCount++;
+
+            BattleContext context = new BattleContext(entities, this.observer);
             if (observer != null) {
                 observer.onRoundStart(roundCount);
             }
@@ -73,8 +75,7 @@ public class BattleController {
                 if (!current.isAlive()) {
                     continue;
                 }
-
-                processRound(current);
+                processRound(current, context);
 
                 BattleOutcome outcome = evaluateBattleOutcome(current);
                 if (outcome == BattleOutcome.PLAYER_WIN && !backupSpawned && !backupEnemies.isEmpty()) {
@@ -164,13 +165,13 @@ public class BattleController {
         return BattleOutcome.ENEMY_WIN;
     }
 
-    private void processRound(Entity current) {
+    private void processRound(Entity current, BattleContext context) {
         if (current == null || !current.isAlive()) {
             return;
         }
 
         current.setCanTakeAction(true);
-        current.updateStatusEffects();
+        current.updateStatusEffects(context);
         if (current instanceof Player player) {
             player.updateCooldown();
         }
@@ -186,7 +187,7 @@ public class BattleController {
         }
 
         if (current instanceof Player player) {
-            processPlayerTurn(player);
+            processPlayerTurn(player, context);
             return;
         }
 
@@ -198,12 +199,12 @@ public class BattleController {
 
             IAction action = enemy.decideAction(target);
             if (action != null) {
-                action.execute(enemy, target, observer);
+                action.execute(enemy, target, context);
             }
         }
     }
 
-    private void processPlayerTurn(Player player) {
+    private void processPlayerTurn(Player player, BattleContext context) {
         while (true) {
             if (observer != null) {
                 observer.displayMessage("Choose action:");
@@ -215,15 +216,16 @@ public class BattleController {
 
             int actionChoice = readInt(1, 4);
             switch (actionChoice) {
-                case 1 -> {
-                    Entity target = chooseEnemyTarget();
-                    if (target != null) {
-                        new BasicAttackAction().execute(player, target, observer);
-                        return;
+                case 1:
+                    {
+                        Entity target = chooseEnemyTarget();
+                        if (target != null) {
+                            new BasicAttackAction().execute(player, target, context);
+                            return;
+                        }       break;
                     }
-                }
-                case 2 -> {
-                    new DefendAction().execute(player, player, observer);
+                case 2:
+                    new DefendAction().execute(player, player, context);
                     return;
                 }
                 case 3 -> {
@@ -239,25 +241,6 @@ public class BattleController {
                             observer.displayMessage("Special skill is on cooldown.");
                         }
                         continue;
-                    }
-
-                    if (player.getSpecialSkill() instanceof ArcaneBlastSkill arcaneBlastSkill) {
-                        List<Entity> targets = getAliveEnemies();
-                        if (targets.isEmpty()) {
-                            if (observer != null) {
-                                observer.displayMessage("No enemy targets available.");
-                            }
-                            continue;
-                        }
-
-                        for (Entity enemy : targets) {
-                            if (enemy != null && enemy.isAlive()) {
-                                arcaneBlastSkill.execute(player, enemy, observer);
-                            }
-                        }
-
-                        player.startCooldown();
-                        return;
                     }
 
                     Entity target = chooseEnemyTarget();

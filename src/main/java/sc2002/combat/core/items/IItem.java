@@ -2,9 +2,9 @@ package sc2002.combat.core.items;
 
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
-import sc2002.combat.ui.IBattleObserver;
+import sc2002.combat.core.utils.BattleContext;
 
 public interface IItem {
-    void use(Player user, Entity target, IBattleObserver observer);
+    void use(Player user, Entity target, BattleContext context);
     String getName();
 }
