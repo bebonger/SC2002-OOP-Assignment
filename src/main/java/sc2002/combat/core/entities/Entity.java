@@ -26,11 +26,11 @@ public abstract class Entity {
         this.statusEffects = new ArrayList<>();
     }
 
-    public void takeDamage(int rawDamage) {
+    public int takeDamage(int rawDamage) {
         // First, reduce incoming damage by effective defense.
         int finalDamage = Math.max(0, rawDamage - getEffectiveDefense());
 
-        // Then let status effects further modify incoming damage.
+        // Then let status effects further modify incoming damage
         for (StatusEffect effect : statusEffects) {
             finalDamage = effect.applyIncomingDamageModifier(finalDamage);
         }
@@ -39,6 +39,8 @@ public abstract class Entity {
 
         // clamp hp to 0
         this.hp = Math.max(0, this.hp - finalDamage);
+
+        return finalDamage;
     }
 
     public void heal(int amount) {

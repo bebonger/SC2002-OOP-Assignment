@@ -9,8 +9,6 @@ public class DefendAction implements IAction {
     public void execute(Entity attacker, Entity target, BattleContext context) {
         attacker.addStatusEffect(new DefenseBoostEffect());
         
-        if (context != null) {
-            context.getObserver().displayMessage(attacker.getName() + " takes a defensive stance!");
-        }
+        context.getObserver().displayMessage(attacker.getName() + " takes a defensive stance!");
     }
 }

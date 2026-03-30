@@ -8,15 +8,14 @@ public class ShieldBashSkill implements ISpecialSkillAction {
 
     @Override
     public void execute(Entity attacker, Entity target, BattleContext context) {
-        int damage = Math.max(1, attacker.getEffectiveAttack() - target.getEffectiveDefense());
-        target.takeDamage(damage);
+        int damage = Math.max(1, attacker.getEffectiveAttack());
+        int finalDamage = target.takeDamage(damage);
 
         // stun for 2 turns
         target.addStatusEffect(new StunEffect(2));
 
-        if (context != null) {
-            context.getObserver().onActionExecuted(attacker, "Shield Bash", target);
-            context.getObserver().displayMessage(target.getName() + "is stunned for 2 rounds");
-        }
+        context.getObserver().onActionExecuted(attacker, "Shield Bash", target);
+        context.getObserver().onDamageDealt(target, finalDamage, target.getHp(), !target.isAlive());
+        context.getObserver().displayMessage(target.getName() + "is stunned for 2 rounds");
     }
 }

@@ -12,12 +12,11 @@ public class ArcaneBlastSkill implements ISpecialSkillAction {
             if (!(e instanceof Enemy)) continue;
 
             if (e.isAlive()) {
-                int damage = Math.max(1, attacker.getEffectiveAttack() - e.getEffectiveDefense());
-
-                e.takeDamage(damage);
+                int damage = Math.max(1, attacker.getEffectiveAttack());
+                int finalDamage = e.takeDamage(damage);
 
                 context.getObserver().onActionExecuted(attacker, "Arcane Blast", e);
-                context.getObserver().onDamageDealt(e, damage, e.getHp(), !e.isAlive());
+                context.getObserver().onDamageDealt(e, finalDamage, e.getHp(), !e.isAlive());
 
                 if (!e.isAlive()) {
                     attacker.increaseBaseAttack(10);

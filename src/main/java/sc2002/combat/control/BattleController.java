@@ -216,15 +216,14 @@ public class BattleController {
 
             int actionChoice = readInt(1, 4);
             switch (actionChoice) {
-                case 1:
-                    {
-                        Entity target = chooseEnemyTarget();
-                        if (target != null) {
-                            new BasicAttackAction().execute(player, target, context);
-                            return;
-                        }       break;
-                    }
-                case 2:
+                case 1 ->{
+                    Entity target = chooseEnemyTarget();
+                    if (target != null) {
+                        new BasicAttackAction().execute(player, target, context);
+                        return;
+                    }       break;
+                }
+                case 2 -> {
                     new DefendAction().execute(player, player, context);
                     return;
                 }
@@ -245,11 +244,7 @@ public class BattleController {
 
                     Entity target = chooseEnemyTarget();
                     if (target != null) {
-                        if (player.getSpecialSkill() instanceof ArcaneBlastSkill blast) {
-                            blast.setTargets(this.entities);
-                            blast.execute(player, null, observer);
-                        } else
-                            player.useSpecialSkill(target);
+                        player.useSpecialSkill(target, context);
                         return;
                     }
 
@@ -291,7 +286,7 @@ public class BattleController {
 
                     Entity target = chooseItemTarget();
                     if (target != null) {
-                        new ItemAction(itemIndex).execute(player, target, observer);
+                        new ItemAction(itemIndex).execute(player, target, context);
                         return;
                     }
 
