@@ -71,7 +71,6 @@ public class BattleController {
                     continue;
                 }
                 
-                current.onTurnStart();
                 processRound(current);
 
                 BattleOutcome outcome = evaluateBattleOutcome(current);
@@ -217,12 +216,12 @@ public class BattleController {
                                 observer.displayMessage("No special skill available.");
                             }
                             continue;
-                        }       if (player.getCurrentCooldown() > 0) {
+                        }  if (player.getCurrentCooldown() > 0) {
                             if (observer != null) {
                                 observer.displayMessage("Special skill is on cooldown.");
                             }
                             continue;
-                        }       Entity target = chooseEnemyTarget();
+                        } Entity target = chooseEnemyTarget();
                         if (target != null) {
                             if (player.getSpecialSkill() instanceof ArcaneBlastSkill blast) {
                                 blast.setTargets(this.entities);
