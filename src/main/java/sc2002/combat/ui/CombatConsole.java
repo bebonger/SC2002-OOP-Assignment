@@ -2,7 +2,7 @@ package sc2002.combat.ui;
 
 import sc2002.combat.core.entities.Entity;
 
-public class CombatConsole implements BattleObserver {
+public class CombatConsole implements IBattleObserver {
     private static final String DIVIDER = "--------------------------------------------------";
 
     @Override

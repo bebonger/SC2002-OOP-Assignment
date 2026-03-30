@@ -2,12 +2,12 @@ package sc2002.combat.core.items;
 
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
-import sc2002.combat.ui.BattleObserver;
+import sc2002.combat.ui.IBattleObserver;
 
-public class PotionItem implements Item {
+public class PotionItem implements IItem {
     @Override
-    public void use(Player user, Entity target, BattleObserver observer) {
-        target.heal(100);
+    public void use(Player user, Entity target, IBattleObserver observer) {
+        user.heal(100);
         observer.onItemUsed(user, "Health Potion", target);
     }
 

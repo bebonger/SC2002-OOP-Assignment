@@ -2,13 +2,13 @@ package sc2002.combat;
 
 import sc2002.combat.control.BattleController;
 import sc2002.combat.control.GameInitialiser;
-import sc2002.combat.ui.BattleObserver;
 import sc2002.combat.ui.CombatConsole;
+import sc2002.combat.ui.IBattleObserver;
 
 public class AppMain {
     public static void main(String[] args) {
         // Instantiate Boundary/UI
-        BattleObserver observer = new CombatConsole();
+        IBattleObserver observer = new CombatConsole();
         
         // Instantiate Controller components as per diagram
         BattleController engine = new BattleController(observer);

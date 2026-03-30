@@ -3,7 +3,7 @@ package sc2002.combat.control;
 import java.util.List;
 import sc2002.combat.core.entities.Entity;
 
-public class SpeedComparator implements TurnOrderStrategy {
+public class SpeedComparator implements ITurnOrderStrategy {
     
     @Override
     public void sort(List<Entity> entities) {

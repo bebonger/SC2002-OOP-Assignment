@@ -3,7 +3,7 @@ package sc2002.combat.core.entities;
 import java.util.ArrayList;
 import java.util.List;
 import sc2002.combat.core.effects.StatusEffect;
-import sc2002.combat.ui.BattleObserver;
+import sc2002.combat.ui.IBattleObserver;
 
 public abstract class Entity {
     protected String name;
@@ -14,7 +14,7 @@ public abstract class Entity {
     protected int speed;
     
     protected List<StatusEffect> statusEffects;
-    protected BattleObserver observer;
+    protected IBattleObserver observer;
     protected boolean canTakeAction = true;
 
     public Entity(String name, int hp, int attack, int defense, int speed) {
@@ -28,7 +28,7 @@ public abstract class Entity {
     }
 
     // Observer subscription
-    public void setObserver(BattleObserver observer) {
+    public void setObserver(IBattleObserver observer) {
         this.observer = observer;
     }
 
