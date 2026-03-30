@@ -8,7 +8,7 @@ public class PotionItem implements IItem {
     @Override
     public void use(Player user, Entity target, IBattleObserver observer) {
         user.heal(100);
-        observer.onItemUsed(user, "Health Potion");
+        observer.onItemUsed(user, "Health Potion", target);
     }
 
     @Override

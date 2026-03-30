@@ -4,7 +4,12 @@ import sc2002.combat.core.effects.StunEffect;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.ui.IBattleObserver;
 
-public class ShieldBashSkill implements ISpecialSkillAction {
+public class ShieldBashSkill extends SpecialSkillAction {
+
+    public ShieldBashSkill() {
+        super("Shield Bash", 3);
+    }
+
     @Override
     public void execute(Entity attacker, Entity target, IBattleObserver observer) {
         int damage = 35;
