@@ -12,7 +12,7 @@ public abstract class Entity {
     protected int attack;
     protected int defense;
     protected int speed;
-    
+
     protected List<StatusEffect> statusEffects;
     protected boolean canTakeAction = true;
 
@@ -54,7 +54,7 @@ public abstract class Entity {
         for (int i = statusEffects.size() - 1; i >= 0; i--) {
             StatusEffect effect = statusEffects.get(i);
             effect.onTurnStart(this, context);
-            
+
             if (effect.isExpired()) {
                 statusEffects.remove(i);
             }
@@ -67,13 +67,15 @@ public abstract class Entity {
 
     public int getEffectiveAttack() {
         int current = this.attack;
-        for (StatusEffect e : statusEffects) current = e.applyAttackModifier(current);
+        for (StatusEffect e : statusEffects)
+            current = e.applyAttackModifier(current);
         return current;
     }
 
     public int getEffectiveDefense() {
         int current = this.defense;
-        for (StatusEffect e : statusEffects) current = e.applyDefenseModifier(current);
+        for (StatusEffect e : statusEffects)
+            current = e.applyDefenseModifier(current);
         return current;
     }
 
@@ -82,12 +84,35 @@ public abstract class Entity {
     }
 
     // Getters and Setters
-    public String getName() { return name; }
-    public int getHp() { return hp; }
-    public int getMaxHp() { return maxHp; }
-    public int getAttack() { return attack; }
-    public int getDefense() { return defense; }
-    public int getSpeed() { return speed; }
-    public boolean canTakeAction() { return canTakeAction; }
-    public void setCanTakeAction(boolean state) { this.canTakeAction = state; }
+    public String getName() {
+        return name;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public int getMaxHp() {
+        return maxHp;
+    }
+
+    public int getAttack() {
+        return attack;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public boolean canTakeAction() {
+        return canTakeAction;
+    }
+
+    public void setCanTakeAction(boolean state) {
+        this.canTakeAction = state;
+    }
 }

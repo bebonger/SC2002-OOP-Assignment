@@ -9,7 +9,8 @@ public abstract class Enemy extends Entity {
     }
 
     public IAction decideAction(Player player) {
-    if (!player.isAlive()) return null;
-    return new BasicAttackAction();
-}
+        if (!player.isAlive())
+            return null;
+        return new BasicAttackAction();
+    }
 }

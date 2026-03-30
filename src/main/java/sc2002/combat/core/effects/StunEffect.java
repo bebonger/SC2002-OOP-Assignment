@@ -4,7 +4,9 @@ import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.utils.BattleContext;
 
 public class StunEffect extends StatusEffect {
-    public StunEffect(int duration) { super("Stunned", duration); }
+    public StunEffect(int duration) {
+        super("Stunned", duration);
+    }
 
     @Override
     public void onTurnStart(Entity owner, BattleContext context) {

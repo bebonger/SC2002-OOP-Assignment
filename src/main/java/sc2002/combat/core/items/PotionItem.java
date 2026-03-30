@@ -12,5 +12,7 @@ public class PotionItem implements IItem {
     }
 
     @Override
-    public String getName() { return "Health Potion"; }
+    public String getName() {
+        return "Health Potion";
+    }
 }

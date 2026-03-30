@@ -5,7 +5,7 @@ import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.utils.BattleContext;
 
 public class ItemAction implements IAction {
-    private int slotIndex;
+    private final int slotIndex;
 
     public ItemAction(int slotIndex) {
         this.slotIndex = slotIndex;

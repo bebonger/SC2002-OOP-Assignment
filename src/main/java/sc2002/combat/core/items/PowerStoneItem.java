@@ -13,5 +13,7 @@ public class PowerStoneItem implements IItem {
     }
 
     @Override
-    public String getName() { return "Power Stone"; }
+    public String getName() {
+        return "Power Stone";
+    }
 }
