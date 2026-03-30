@@ -21,7 +21,7 @@ public class GameInitialiser {
     // Store settings for replay
     private String lastPlayerName;
     private String lastClassChoice;
-    private List<Integer> lastItemChoices;
+    private final List<Integer> lastItemChoices;
     private String lastDifficulty;
 
     public GameInitialiser(BattleController engine, IBattleObserver observer) {
@@ -70,14 +70,18 @@ public class GameInitialiser {
             display("3. Exit");
             
             String input = UserInput.SCANNER.nextLine().trim();
-            if ("1".equals(input)) {
-                startReplay();
-                return true;
-            } else if ("2".equals(input)) {
-                return true; // Returns true to trigger a normal start() again
-            } else if ("3".equals(input)) {
-                display("Exiting game. Thanks for playing!");
-                return false;
+            if (null != input) switch (input) {
+                case "1" -> {
+                    startReplay();
+                    return true;
+                }
+                case "2" -> {
+                    return true; // Returns true to trigger a normal start() again
+                }
+                case "3" -> {
+                    display("Exiting game. Thanks for playing!");
+                    return false;
+                }
             }
             display("Invalid choice. Enter 1, 2, or 3.");
         }
@@ -118,15 +122,19 @@ public class GameInitialiser {
     }
     
     private void addItemToInventory(Player player, int choice) {
-        if (choice == 1) {
-            player.getInventory().add(new PotionItem());
-            display("Health Potion added to inventory.");
-        } else if (choice == 2) {
-            player.getInventory().add(new PowerStoneItem());
-            display("Power Stone added to inventory.");
-        } else {
-            player.getInventory().add(new SmokeBombItem());
-            display("Smoke Bomb added to inventory.");
+        switch (choice) {
+            case 1 -> {
+                player.getInventory().add(new PotionItem());
+                display("Health Potion added to inventory.");
+            }
+            case 2 -> {
+                player.getInventory().add(new PowerStoneItem());
+                display("Power Stone added to inventory.");
+            }
+            default -> {
+                player.getInventory().add(new SmokeBombItem());
+                display("Smoke Bomb added to inventory.");
+            }
         }
     }
 
