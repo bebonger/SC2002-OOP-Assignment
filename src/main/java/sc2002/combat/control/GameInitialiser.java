@@ -17,7 +17,7 @@ import sc2002.combat.ui.IBattleObserver;
 public class GameInitialiser {
     private final BattleController engine;
     private final IBattleObserver observer;
-    
+
     // Store settings for replay
     private String lastPlayerName;
     private String lastClassChoice;
@@ -45,10 +45,10 @@ public class GameInitialiser {
 
         List<Entity> battleInitialEnemies = new ArrayList<>(initialEnemies);
         List<Entity> battleBackupEnemies = new ArrayList<>(backupEnemies);
-        
+
         engine.startBattle(player, battleInitialEnemies, battleBackupEnemies);
     }
-    
+
     public void startReplay() {
         Player player = setupPlayer(lastPlayerName, lastClassChoice);
         chooseStarterItem(player, true);
@@ -58,35 +58,36 @@ public class GameInitialiser {
 
         List<Entity> battleInitialEnemies = new ArrayList<>(initialEnemies);
         List<Entity> battleBackupEnemies = new ArrayList<>(backupEnemies);
-        
+
         engine.startBattle(player, battleInitialEnemies, battleBackupEnemies);
     }
-    
+
     public boolean askPostGameAction() {
         while (true) {
             display("What would you like to do next?");
             display("1. Replay with the same settings");
             display("2. Start a new game (return to home screen)");
             display("3. Exit");
-            
+
             String input = UserInput.SCANNER.nextLine().trim();
-            if (null != input) switch (input) {
-                case "1" -> {
-                    startReplay();
-                    return true;
+            if (null != input)
+                switch (input) {
+                    case "1" -> {
+                        startReplay();
+                        return true;
+                    }
+                    case "2" -> {
+                        return true; // Returns true to trigger a normal start() again
+                    }
+                    case "3" -> {
+                        display("Exiting game. Thanks for playing!");
+                        return false;
+                    }
                 }
-                case "2" -> {
-                    return true; // Returns true to trigger a normal start() again
-                }
-                case "3" -> {
-                    display("Exiting game. Thanks for playing!");
-                    return false;
-                }
-            }
             display("Invalid choice. Enter 1, 2, or 3.");
         }
     }
-    
+
     private Player setupPlayer(String playerName, String classChoice) {
         Player player;
         if ("2".equals(classChoice)) {
@@ -120,7 +121,7 @@ public class GameInitialiser {
             }
         }
     }
-    
+
     private void addItemToInventory(Player player, int choice) {
         switch (choice) {
             case 1 -> {
@@ -145,7 +146,8 @@ public class GameInitialiser {
             case "hard":
                 enemies.add(new Goblin("Goblin 1"));
                 enemies.add(new Goblin("Goblin 2"));
-                // Note: Backup Spawn is 1 Goblin, 2 Wolf (to be handled by BattleController logic later)
+                // Note: Backup Spawn is 1 Goblin, 2 Wolf (to be handled by BattleController
+                // logic later)
                 break;
             case "medium":
                 enemies.add(new Goblin("Goblin 1"));
@@ -285,10 +287,10 @@ public class GameInitialiser {
 
     private String formatEntityStats(String label, Entity entity) {
         return label
-            + " - HP: " + entity.getMaxHp()
-            + ", ATK: " + entity.getAttack()
-            + ", DEF: " + entity.getDefense()
-            + ", SPD: " + entity.getSpeed();
+                + " - HP: " + entity.getMaxHp()
+                + ", ATK: " + entity.getAttack()
+                + ", DEF: " + entity.getDefense()
+                + ", SPD: " + entity.getSpeed();
     }
 
     private void displayDifficultyDetails() {

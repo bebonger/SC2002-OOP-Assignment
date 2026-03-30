@@ -4,16 +4,11 @@ import sc2002.combat.core.effects.StunEffect;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.ui.IBattleObserver;
 
-public class ShieldBashSkill extends SpecialSkillAction {
-
-    public ShieldBashSkill() {
-        super("Shield Bash", 3);
-    }
+public class ShieldBashSkill implements ISpecialSkillAction {
 
     @Override
     public void execute(Entity attacker, Entity target, IBattleObserver observer) {
-        int damage = 35;
-        target.takeDamage(damage);
+        target.takeDamage(attacker.getEffectiveAttack());
 
         // stun for 2 turns
         target.addStatusEffect(new StunEffect(2));

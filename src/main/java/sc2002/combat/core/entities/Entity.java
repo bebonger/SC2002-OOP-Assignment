@@ -57,10 +57,6 @@ public abstract class Entity {
         return this.hp > 0;
     }
 
-    public void onTurnStart() {
-        updateStatusEffects();
-    }
-
     // Status Effect Lifecycle
     public void updateStatusEffects() {
         for (int i = statusEffects.size() - 1; i >= 0; i--) {

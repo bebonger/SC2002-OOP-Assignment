@@ -2,6 +2,7 @@ package sc2002.combat.control;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import sc2002.combat.core.actions.ArcaneBlastSkill;
 import sc2002.combat.core.actions.BasicAttackAction;
 import sc2002.combat.core.actions.DefendAction;
@@ -41,39 +42,38 @@ public class BattleController {
     public void startBattle(Player player, List<Entity> initialEnemies, List<Entity> backupEnemies) {
         this.entities.clear();
         this.backupEnemies.clear();
-        
+
         this.entities.add(player);
         this.entities.addAll(initialEnemies);
-        
+
         if (backupEnemies != null) {
             this.backupEnemies.addAll(backupEnemies);
         }
-        
+
         this.roundCount = 0;
         this.backupSpawned = false;
-        
+
         runBattleLoop();
     }
 
     public void runBattleLoop() {
         boolean isBattleOngoing = true;
-        
+
         while (isBattleOngoing) {
             roundCount++;
             if (observer != null) {
                 observer.onRoundStart(roundCount);
             }
-            
+
             turnStrategy.sort(entities);
-            
+
             List<Entity> currentRoundEntities = new ArrayList<>(entities);
-            
+
             for (Entity current : currentRoundEntities) {
                 if (!current.isAlive()) {
                     continue;
                 }
-                
-                current.onTurnStart();
+
                 processRound(current);
 
                 BattleOutcome outcome = evaluateBattleOutcome(current);
@@ -84,11 +84,11 @@ public class BattleController {
                     if (observer != null) {
                         observer.displayMessage("Backup enemies have spawned!");
                     }
-                    
+
                     for (Entity backup : backupEnemies) {
                         backup.setCanTakeAction(false);
                     }
-                    
+
                     break;
                 }
 
@@ -102,20 +102,31 @@ public class BattleController {
                                 if (e == null) {
                                     continue;
                                 }
-                                if (e instanceof Player) remainingDetail = e.getHp(); 
+                                if (e instanceof Player)
+                                    remainingDetail = e.getHp();
                             }
                         } else {
                             for (Entity e : entities) {
                                 if (e == null) {
                                     continue;
                                 }
-                                if (!(e instanceof Player) && e.isAlive()) remainingDetail++; 
+                                if (!(e instanceof Player) && e.isAlive())
+                                    remainingDetail++;
                             }
                         }
                         observer.onGameOver(playerAlive, roundCount, remainingDetail);
                     }
                     break;
                 }
+
+                // Sleep
+                try {
+                    TimeUnit.MILLISECONDS.sleep(500);
+                } catch (InterruptedException ex) {
+                    System.getLogger(BattleController.class.getName()).log(System.Logger.Level.ERROR, (String) null,
+                            ex);
+                }
+
             }
         }
     }
@@ -160,6 +171,9 @@ public class BattleController {
 
         current.setCanTakeAction(true);
         current.updateStatusEffects();
+        if (current instanceof Player player) {
+            player.updateCooldown();
+        }
         if (!current.canTakeAction() || !current.isAlive()) {
             if (observer != null) {
                 observer.displayMessage(current.getName() + " is unable to act this turn.");
@@ -201,103 +215,104 @@ public class BattleController {
 
             int actionChoice = readInt(1, 4);
             switch (actionChoice) {
-                case 1 ->                     {
-                        Entity target = chooseEnemyTarget();
-                        if (target != null) {
-                            new BasicAttackAction().execute(player, target, observer);
-                            return;
-                        }                          }
+                case 1 -> {
+                    Entity target = chooseEnemyTarget();
+                    if (target != null) {
+                        new BasicAttackAction().execute(player, target, observer);
+                        return;
+                    }
+                }
                 case 2 -> {
                     new DefendAction().execute(player, player, observer);
                     return;
                 }
-                case 3 ->                     {
-                        if (player.getSpecialSkill() == null) {
-                            if (observer != null) {
-                                observer.displayMessage("No special skill available.");
-                            }
-                            continue;
+                case 3 -> {
+                    if (player.getSpecialSkill() == null) {
+                        if (observer != null) {
+                            observer.displayMessage("No special skill available.");
                         }
-
-                        if (player.getCurrentCooldown() > 0) {
-                            if (observer != null) {
-                                observer.displayMessage("Special skill is on cooldown.");
-                            }
-                            continue;
-                        }
-
-                        if (player.getSpecialSkill() instanceof ArcaneBlastSkill arcaneBlastSkill) {
-                            List<Entity> targets = getAliveEnemies();
-                            if (targets.isEmpty()) {
-                                if (observer != null) {
-                                    observer.displayMessage("No enemy targets available.");
-                                }
-                                continue;
-                            }
-
-                            for (Entity enemy : targets) {
-                                if (enemy != null && enemy.isAlive()) {
-                                    arcaneBlastSkill.execute(player, enemy, observer);
-                                }
-                            }
-
-                            player.startCooldown();
-                            return;
-                        }
-
-                        Entity target = chooseEnemyTarget();
-                        if (target != null) {
-                            if (player.getSpecialSkill() instanceof ArcaneBlastSkill blast) {
-                                blast.setTargets(this.entities);
-                                blast.execute(player, null, observer);
-                            } else
-                                player.useSpecialSkill(target);
-                            return;
-                        }
-
+                        continue;
                     }
-                default ->                     {
-                        if (player.getInventory().isEmpty()) {
-                            if (observer != null) {
-                                observer.displayMessage("No items in inventory.");
-                            }
-                            continue;
+
+                    if (player.getCurrentCooldown() > 0) {
+                        if (observer != null) {
+                            observer.displayMessage("Special skill is on cooldown.");
                         }
-
-                        int itemIndex = chooseItemIndex(player);
-                        if (itemIndex < 0) {
-                            continue;
-                        }
-                        IItem selectedItem = player.getInventory().get(itemIndex);
-
-                        if (isSmokeBomb(selectedItem)) {
-                            List<Entity> aliveEnemies = getAliveEnemies();
-                            if (aliveEnemies.isEmpty()) {
-                                if (observer != null) {
-                                    observer.displayMessage("No enemies to affect.");
-                                }
-                                continue;
-                            }
-
-                            player.getInventory().remove(itemIndex);
-                            for (Entity enemy : aliveEnemies) {
-                                if (!enemy.hasStatusEffect("Stunned")) {
-                                    enemy.addStatusEffect(new SmokeBombEffect(2));
-                                    if (observer != null) {
-                                        observer.onItemUsed(player, selectedItem.getName(), enemy);
-                                    }
-                                }
-                            }
-                            return;
-                        }
-
-                        Entity target = chooseItemTarget();
-                        if (target != null) {
-                            new ItemAction(itemIndex).execute(player, target, observer);
-                            return;
-                        }
-
+                        continue;
                     }
+
+                    if (player.getSpecialSkill() instanceof ArcaneBlastSkill arcaneBlastSkill) {
+                        List<Entity> targets = getAliveEnemies();
+                        if (targets.isEmpty()) {
+                            if (observer != null) {
+                                observer.displayMessage("No enemy targets available.");
+                            }
+                            continue;
+                        }
+
+                        for (Entity enemy : targets) {
+                            if (enemy != null && enemy.isAlive()) {
+                                arcaneBlastSkill.execute(player, enemy, observer);
+                            }
+                        }
+
+                        player.startCooldown();
+                        return;
+                    }
+
+                    Entity target = chooseEnemyTarget();
+                    if (target != null) {
+                        if (player.getSpecialSkill() instanceof ArcaneBlastSkill blast) {
+                            blast.setTargets(this.entities);
+                            blast.execute(player, null, observer);
+                        } else
+                            player.useSpecialSkill(target);
+                        return;
+                    }
+
+                }
+                default -> {
+                    if (player.getInventory().isEmpty()) {
+                        if (observer != null) {
+                            observer.displayMessage("No items in inventory.");
+                        }
+                        continue;
+                    }
+
+                    int itemIndex = chooseItemIndex(player);
+                    if (itemIndex < 0) {
+                        continue;
+                    }
+                    IItem selectedItem = player.getInventory().get(itemIndex);
+
+                    if (isSmokeBomb(selectedItem)) {
+                        List<Entity> aliveEnemies = getAliveEnemies();
+                        if (aliveEnemies.isEmpty()) {
+                            if (observer != null) {
+                                observer.displayMessage("No enemies to affect.");
+                            }
+                            continue;
+                        }
+
+                        player.getInventory().remove(itemIndex);
+                        for (Entity enemy : aliveEnemies) {
+                            if (!enemy.hasStatusEffect("Stunned")) {
+                                enemy.addStatusEffect(new SmokeBombEffect(2));
+                                if (observer != null) {
+                                    observer.onItemUsed(player, selectedItem.getName(), enemy);
+                                }
+                            }
+                        }
+                        return;
+                    }
+
+                    Entity target = chooseItemTarget();
+                    if (target != null) {
+                        new ItemAction(itemIndex).execute(player, target, observer);
+                        return;
+                    }
+
+                }
             }
         }
     }

@@ -95,7 +95,7 @@ public class CombatConsole implements IBattleObserver {
         }
 
         String item = itemName == null || itemName.isBlank() ? "an item" : itemName;
-        System.out.println("ITEM | " + user.getName() + " used " + item + "on " + target.getName());
+        System.out.println("ITEM | " + user.getName() + " used " + item + " on " + target.getName());
     }
 
     @Override
