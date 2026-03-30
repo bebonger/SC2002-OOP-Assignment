@@ -2,6 +2,7 @@ package sc2002.combat.control;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import sc2002.combat.core.actions.ArcaneBlastSkill;
 import sc2002.combat.core.actions.BasicAttackAction;
 import sc2002.combat.core.actions.DefendAction;
@@ -70,7 +71,7 @@ public class BattleController {
                 if (!current.isAlive()) {
                     continue;
                 }
-                
+            
                 processRound(current);
 
                 BattleOutcome outcome = evaluateBattleOutcome(current);
@@ -113,6 +114,14 @@ public class BattleController {
                     }
                     break;
                 }
+
+                // Sleep
+                try {
+                    TimeUnit.MILLISECONDS.sleep(1200);
+                } catch (InterruptedException ex) {
+                    System.getLogger(BattleController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                }
+                
             }
         }
     }
