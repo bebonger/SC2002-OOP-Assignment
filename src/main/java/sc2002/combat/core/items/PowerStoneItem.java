@@ -9,7 +9,7 @@ public class PowerStoneItem implements IItem {
     public void use(Player user, Entity target, IBattleObserver observer) {
         // trigger skill immediately without cooldown reset
         user.getSpecialSkill().execute(user, target, observer);
-        observer.onItemUsed(user, "Power Stone");
+        observer.onItemUsed(user, "Power Stone", target);
     }
 
     @Override

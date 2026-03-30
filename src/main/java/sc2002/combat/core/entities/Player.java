@@ -2,12 +2,12 @@ package sc2002.combat.core.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import sc2002.combat.core.actions.ISpecialSkillAction;
+import sc2002.combat.core.actions.SpecialSkillAction;
 import sc2002.combat.core.items.IItem;
 
 public abstract class Player extends Entity {
     protected List<IItem> inventory;
-    protected ISpecialSkillAction specialSkill;
+    protected SpecialSkillAction specialSkill;
     protected int currentCooldown = 0;
     protected final int MAX_COOLDOWN = 3;
 
@@ -30,6 +30,12 @@ public abstract class Player extends Entity {
         } 
     }
 
+    @Override
+    public void onTurnStart() {
+        super.onTurnStart();
+        updateCooldown();
+    }
+
     public void updateCooldown() {
         if (currentCooldown > 0) {
             currentCooldown--;
@@ -43,5 +49,5 @@ public abstract class Player extends Entity {
     // Getters and Setters
     public List<IItem> getInventory() { return inventory; }
     public int getCurrentCooldown() { return currentCooldown; }
-    public ISpecialSkillAction getSpecialSkill() { return specialSkill; }
+    public SpecialSkillAction getSpecialSkill() { return specialSkill; }
 }

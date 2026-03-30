@@ -8,9 +8,6 @@ public class SmokeBombEffect extends StatusEffect {
 
     @Override
     public int applyDamageModifier(int damage) {
-        if (rand.nextBoolean()) { // 50% chance
-            return 0; // dodged
-        }
-        return damage;
+        return 0;
     }
 }

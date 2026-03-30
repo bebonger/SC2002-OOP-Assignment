@@ -74,7 +74,7 @@ public class CombatConsole implements IBattleObserver {
         }
 
         String effect = effectName == null || effectName.isBlank() ? "Status Effect" : effectName;
-        System.out.println(entity.getName() + " gains " + effect + " for " + duration + " turn(s).");
+        System.out.println("ITEM | " + entity.getName() + " gains " + effect + " for " + duration + " turn(s).");
     }
 
     @Override
@@ -84,17 +84,17 @@ public class CombatConsole implements IBattleObserver {
         }
 
         String effect = effectName == null || effectName.isBlank() ? "Status Effect" : effectName;
-        System.out.println(effect + " on " + entity.getName() + " has expired.");
+        System.out.println("EFFECT | " + effect + " on " + entity.getName() + " has expired.");
     }
 
     @Override
-    public void onItemUsed(Entity user, String itemName) {
+    public void onItemUsed(Entity user, String itemName, Entity target) {
         if (user == null) {
             return;
         }
 
         String item = itemName == null || itemName.isBlank() ? "an item" : itemName;
-        System.out.println(user.getName() + " used " + item + ".");
+        System.out.println("ITEM | " + user.getName() + " used " + item + "on " + target.getName());
     }
 
     @Override
