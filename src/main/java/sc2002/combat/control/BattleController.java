@@ -180,6 +180,7 @@ public class BattleController {
         }
 
         if (current instanceof Player player) {
+            player.updateCooldown();
             processPlayerTurn(player, context);
             return;
         }
