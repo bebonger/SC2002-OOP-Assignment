@@ -20,7 +20,7 @@ public class CombatConsole implements IBattleObserver {
         }
 
         System.out.println();
-        System.out.println("TURN | " + activeEntity.getName() + " (HP: " + activeEntity.getHp() + ")");
+        System.out.println("Turn: " + activeEntity.getName() + " (HP: " + activeEntity.getHp() + ")");
     }
 
     @Override
@@ -30,8 +30,7 @@ public class CombatConsole implements IBattleObserver {
         }
 
         System.out.println(
-            "DAMAGE | "
-            + target.getName()
+            target.getName()
             + " takes "
             + damage
             + " damage. HP now: "
@@ -49,7 +48,7 @@ public class CombatConsole implements IBattleObserver {
         String targetName = target == null ? "Unknown" : target.getName();
         String action = actionName == null || actionName.isBlank() ? "Action" : actionName;
 
-        System.out.println("ACTION | " + attackerName + " uses " + action + " on " + targetName + ".");
+        System.out.println(attackerName + " uses " + action + " on " + targetName + ".");
     }
 
     @Override
@@ -60,10 +59,10 @@ public class CombatConsole implements IBattleObserver {
         System.out.println(DIVIDER);
 
         if (playerAlive) {
-            System.out.println("RESULT | Congratulations, you have defeated all your enemies.");
+            System.out.println("Congratulations, you have defeated all your enemies.");
             System.out.println("Statistics: Remaining HP: " + remainingDetail + " | Total Rounds: " + roundCount);
         } else {
-            System.out.println("RESULT | Defeated. Don't give up, try again!");
+            System.out.println("Defeated. Don't give up, try again!");
             System.out.println("Statistics: Enemies remaining: " + remainingDetail + " | Total Rounds Survived: " + roundCount);
         }
     }

@@ -17,11 +17,11 @@ public abstract class StatusEffect {
     }
 
     public int applyAttackModifier(int currentAtk) { return currentAtk; }
-    public int applyIncomingDamageModifier(int incomingDamage) { return incomingDamage; }
     public int applyDefenseModifier(int currentDef) { return currentDef; }
+    public int applyDamageModifier(int incomingDamage) { return incomingDamage; }
 
     public boolean isExpired() {
-        return duration < 0;
+        return duration <= 0;
     }
 
     public String getName() { return name; }
