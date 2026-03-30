@@ -21,7 +21,7 @@ public abstract class StatusEffect {
     public int applyDamageModifier(int incomingDamage) { return incomingDamage; }
 
     public boolean isExpired() {
-        return duration <= 0;
+        return duration < 0;
     }
 
     public String getName() { return name; }
