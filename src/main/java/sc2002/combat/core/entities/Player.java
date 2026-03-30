@@ -24,7 +24,7 @@ public abstract class Player extends Entity {
     }
 
     public void useSpecialSkill(Entity target) {
-    if (this.currentCooldown == 0) {
+        if (this.currentCooldown == 0) {
             this.specialSkill.execute(this, target, this.observer);
             this.currentCooldown = MAX_COOLDOWN; 
         } 

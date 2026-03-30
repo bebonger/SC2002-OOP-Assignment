@@ -8,8 +8,8 @@ public class ShieldBashSkill implements ISpecialSkillAction {
 
     @Override
     public void execute(Entity attacker, Entity target, IBattleObserver observer) {
-        int damage = 35;
-        target.takeDamage(damage);
+        int damage = Math.max(1, attacker.getEffectiveAttack() - target.getEffectiveDefense());
+        target.takeDamage(attacker.getEffectiveAttack());
 
         // stun for 2 turns
         target.addStatusEffect(new StunEffect(2));
