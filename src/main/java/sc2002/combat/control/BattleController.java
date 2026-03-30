@@ -212,60 +212,66 @@ public class BattleController {
             }
 
             int actionChoice = readInt(1, 4);
-            switch (actionChoice) {
-                case 1 -> {
-                    Entity target = chooseEnemyTarget();
-                    if (target != null) {
-                        new BasicAttackAction().execute(player, target, context);
-                        return;
-                    }
-                    break;
+            handlePlayerActionChoice(player, context, actionChoice);
+            return;
+        }
+    }
+
+    private boolean handlePlayerActionChoice(Player player, BattleContext context, int actionChoice) {
+        switch (actionChoice) {
+            case 1 -> {
+                Entity target = chooseEnemyTarget();
+                if (target != null) {
+                    new BasicAttackAction().execute(player, target, context);
+                    return true;
                 }
-                case 2 -> {
-                    new DefendAction().execute(player, player, context);
-                    return;
+                return false;
+            }
+            case 2 -> {
+                new DefendAction().execute(player, player, context);
+                return true;
+            }
+            case 3 -> {
+                if (player.getSpecialSkill() == null) {
+                    if (observer != null) {
+                        observer.displayMessage("No special skill available.");
+                    }
+                    return false;
                 }
-                case 3 -> {
-                    if (player.getSpecialSkill() == null) {
-                        if (observer != null) {
-                            observer.displayMessage("No special skill available.");
-                        }
-                        continue;
-                    }
 
-                    if (player.getCurrentCooldown() > 0) {
-                        if (observer != null) {
-                            observer.displayMessage("Special skill is on cooldown.");
-                        }
-                        continue;
+                if (player.getCurrentCooldown() > 0) {
+                    if (observer != null) {
+                        observer.displayMessage("Special skill is on cooldown.");
                     }
-
-                    Entity target = chooseEnemyTarget();
-                    if (target != null) {
-                        player.useSpecialSkill(target, context);
-                        return;
-                    }
-
+                    return false;
                 }
-                default -> {
-                    if (player.getInventory().isEmpty()) {
-                        if (observer != null) {
-                            observer.displayMessage("No items in inventory.");
-                        }
-                        continue;
-                    }
 
-                    int itemIndex = chooseItemIndex(player);
-                    if (itemIndex < 0) {
-                        continue;
-                    }
-
-                    Entity target = chooseItemTarget();
-                    if (target != null) {
-                        new ItemAction(itemIndex).execute(player, target, context);
-                        return;
-                    }
+                Entity target = chooseEnemyTarget();
+                if (target != null) {
+                    player.useSpecialSkill(target, context);
+                    return true;
                 }
+                return false;
+            }
+            default -> {
+                if (player.getInventory().isEmpty()) {
+                    if (observer != null) {
+                        observer.displayMessage("No items in inventory.");
+                    }
+                    return false;
+                }
+
+                int itemIndex = chooseItemIndex(player);
+                if (itemIndex < 0) {
+                    return false;
+                }
+
+                Entity target = chooseItemTarget();
+                if (target != null) {
+                    new ItemAction(itemIndex).execute(player, target, context);
+                    return true;
+                }
+                return false;
             }
         }
     }
