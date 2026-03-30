@@ -119,7 +119,7 @@ public class BattleController {
 
                 // Sleep
                 try {
-                    TimeUnit.MILLISECONDS.sleep(1200);
+                    TimeUnit.MILLISECONDS.sleep(500);
                 } catch (InterruptedException ex) {
                     System.getLogger(BattleController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
                 }
