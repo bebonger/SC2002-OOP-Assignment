@@ -13,6 +13,7 @@ import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.items.IItem;
 import sc2002.combat.core.utils.BattleContext;
 import sc2002.combat.ui.IBattleObserver;
+import sc2002.combat.core.items.ITargetable;
 
 public class BattleController {
     private enum BattleOutcome {
@@ -266,15 +267,21 @@ public class BattleController {
                     return false;
                 }
 
-                Entity target = chooseItemTarget();
-                if (target != null) {
-                    new ItemAction(itemIndex).execute(player, target, context);
+                IItem item = player.getInventory().get(itemIndex);
+                if (item instanceof ITargetable) {
+                    Entity target = chooseItemTarget();
+                    if (target != null) {
+                        new ItemAction(itemIndex).execute(player, target, context);
+                        return true;
+                    }
+                    return false;
+                } else {
+                    new ItemAction(itemIndex).execute(player, player, context);
                     return true;
-                }
-                return false;
             }
         }
     }
+}
 
     private Entity chooseEnemyTarget() {
         List<Entity> aliveEnemies = getAliveEnemies();
