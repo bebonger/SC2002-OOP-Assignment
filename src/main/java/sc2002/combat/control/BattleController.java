@@ -13,7 +13,6 @@ import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.items.IItem;
 import sc2002.combat.core.utils.BattleContext;
 import sc2002.combat.ui.IBattleObserver;
-import sc2002.combat.ui.CombatConsole;
 
 public class BattleController {
     private enum BattleOutcome {
@@ -25,14 +24,12 @@ public class BattleController {
     private final List<Entity> entities;
     private final List<Entity> backupEnemies;
     private final IBattleObserver observer;
-    private final CombatConsole console;
     private final ITurnOrderStrategy turnStrategy;
     private int roundCount;
     private boolean backupSpawned;
 
-    public BattleController(CombatConsole console) {
-        this.console = console;
-        this.observer = console;
+    public BattleController(IBattleObserver observer) {
+        this.observer = observer;
         this.entities = new ArrayList<>();
         this.backupEnemies = new ArrayList<>();
         this.turnStrategy = new SpeedComparator();
@@ -205,19 +202,8 @@ public class BattleController {
     }
 
     private void processPlayerTurn(Player player, BattleContext context) {
-        while (true) {
-            if (observer != null) {
-                observer.displayMessage("Choose action:");
-                observer.displayMessage("1. Basic Attack");
-                observer.displayMessage("2. Defend");
-                observer.displayMessage("3. Special Skill (Cooldown: " + player.getCurrentCooldown() + ")");
-                observer.displayMessage("4. Use Item");
-            }
-
-            int actionChoice = console.readIntInRange(1, 4);
-            handlePlayerActionChoice(player, context, actionChoice);
-            return;
-        }
+        int actionChoice = observer.promptForActionSelection(player.getCurrentCooldown());
+        handlePlayerActionChoice(player, context, actionChoice);
     }
 
     private boolean handlePlayerActionChoice(Player player, BattleContext context, int actionChoice) {
@@ -288,16 +274,7 @@ public class BattleController {
             return null;
         }
 
-        if (observer != null) {
-            observer.displayMessage("Choose target:");
-            for (int i = 0; i < aliveEnemies.size(); i++) {
-                Entity enemy = aliveEnemies.get(i);
-                observer.displayMessage((i + 1) + ". " + enemy.getName() + " (HP: " + enemy.getHp() + ")");
-            }
-            observer.displayMessage((aliveEnemies.size() + 1) + ". Back");
-        }
-
-        int targetChoice = console.readIntInRange(1, aliveEnemies.size() + 1);
+        int targetChoice = observer.promptForTargetSelection(aliveEnemies, true);
         if (targetChoice == aliveEnemies.size() + 1) {
             return null;
         }
@@ -306,15 +283,8 @@ public class BattleController {
 
     private int chooseItemIndex(Player player) {
         List<IItem> inventory = player.getInventory();
-        if (observer != null) {
-            observer.displayMessage("Choose item:");
-            for (int i = 0; i < inventory.size(); i++) {
-                observer.displayMessage((i + 1) + ". " + inventory.get(i).getName());
-            }
-            observer.displayMessage((inventory.size() + 1) + ". Back");
-        }
 
-        int itemChoice = console.readIntInRange(1, inventory.size() + 1);
+        int itemChoice = observer.promptForItemSelection(inventory, true);
         if (itemChoice == inventory.size() + 1) {
             return -1;
         }
@@ -328,17 +298,8 @@ public class BattleController {
         }
 
         List<Entity> aliveEnemies = getAliveEnemies();
-        if (observer != null) {
-            observer.displayMessage("Choose item target:");
-            observer.displayMessage("1. " + player.getName() + " (Self)");
-            for (int i = 0; i < aliveEnemies.size(); i++) {
-                Entity enemy = aliveEnemies.get(i);
-                observer.displayMessage((i + 2) + ". " + enemy.getName() + " (HP: " + enemy.getHp() + ")");
-            }
-            observer.displayMessage((aliveEnemies.size() + 2) + ". Back");
-        }
 
-        int targetChoice = console.readIntInRange(1, aliveEnemies.size() + 2);
+        int targetChoice = observer.promptForItemTargetSelection(player, aliveEnemies, true);
         if (targetChoice == aliveEnemies.size() + 2) {
             return null;
         }

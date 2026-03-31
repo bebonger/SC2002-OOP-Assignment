@@ -13,12 +13,10 @@ import sc2002.combat.core.items.PotionItem;
 import sc2002.combat.core.items.PowerStoneItem;
 import sc2002.combat.core.items.SmokeBombItem;
 import sc2002.combat.ui.IBattleObserver;
-import sc2002.combat.ui.CombatConsole;
 
 public class GameInitialiser {
     private final BattleController engine;
     private final IBattleObserver observer;
-    private final CombatConsole console;
 
     // Store settings for replay
     private String lastPlayerName;
@@ -26,17 +24,16 @@ public class GameInitialiser {
     private final List<Integer> lastItemChoices;
     private String lastDifficulty;
 
-    public GameInitialiser(BattleController engine, CombatConsole console) {
+    public GameInitialiser(BattleController engine, IBattleObserver observer) {
         this.engine = engine;
-        this.console = console;
-        this.observer = console;
+        this.observer = observer;
         this.lastItemChoices = new ArrayList<>();
     }
 
     public void start() {
         displayLoadingScreenDetails();
 
-        lastPlayerName = console.readNonEmpty("Enter your player name:");
+        lastPlayerName = observer.readNonEmpty("Enter your player name:");
         lastClassChoice = askClassChoice();
 
         Player player = setupPlayer(lastPlayerName, lastClassChoice);
@@ -72,7 +69,7 @@ public class GameInitialiser {
             display("2. Start a new game (return to home screen)");
             display("3. Exit");
 
-            String input = console.readLineTrim();
+            String input = observer.readLineTrim();
             if (null != input)
                 switch (input) {
                     case "1" -> {
@@ -114,7 +111,7 @@ public class GameInitialiser {
 
             for (int i = 1; i <= 2; i++) {
                 display("Select Item " + i + ":");
-                int choice = console.readIntInRange(1, 3);
+                int choice = observer.promptForStarterItemSelection(i);
                 lastItemChoices.add(choice);
                 addItemToInventory(player, choice);
             }
@@ -192,40 +189,17 @@ public class GameInitialiser {
     }
 
     private String askClassChoice() {
-        while (true) {
-            display("Choose class:");
-            display("1. Warrior");
-            display("2. Wizard");
-            String input = console.readLineTrim();
-
-            if ("1".equals(input) || "2".equals(input)) {
-                return input;
-            }
-
-            display("Invalid class choice. Enter 1 or 2.");
-        }
+        int choice = observer.promptForClassSelection();
+        return Integer.toString(choice);
     }
 
     private String askDifficulty() {
-        while (true) {
-            display("Choose difficulty:");
-            display("1. Easy");
-            display("2. Medium");
-            display("3. Hard");
-            String input = console.readLineTrim();
-
-            if ("1".equals(input)) {
-                return "Easy";
-            }
-            if ("2".equals(input)) {
-                return "Medium";
-            }
-            if ("3".equals(input)) {
-                return "Hard";
-            }
-
-            display("Invalid difficulty choice. Enter 1, 2, or 3.");
-        }
+        int choice = observer.promptForDifficultySelection();
+        return switch (choice) {
+            case 1 -> "Easy";
+            case 2 -> "Medium";
+            default -> "Hard";
+        };
     }
 
     private void displayLoadingScreenDetails() {
