@@ -13,6 +13,7 @@ import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.items.IItem;
 import sc2002.combat.core.utils.BattleContext;
 import sc2002.combat.ui.IBattleObserver;
+import sc2002.combat.ui.CombatConsole;
 
 public class BattleController {
     private enum BattleOutcome {
@@ -24,12 +25,14 @@ public class BattleController {
     private final List<Entity> entities;
     private final List<Entity> backupEnemies;
     private final IBattleObserver observer;
+    private final CombatConsole console;
     private final ITurnOrderStrategy turnStrategy;
     private int roundCount;
     private boolean backupSpawned;
 
-    public BattleController(IBattleObserver observer) {
-        this.observer = observer;
+    public BattleController(CombatConsole console) {
+        this.console = console;
+        this.observer = console;
         this.entities = new ArrayList<>();
         this.backupEnemies = new ArrayList<>();
         this.turnStrategy = new SpeedComparator();
@@ -211,7 +214,7 @@ public class BattleController {
                 observer.displayMessage("4. Use Item");
             }
 
-            int actionChoice = readInt(1, 4);
+            int actionChoice = console.readIntInRange(1, 4);
             handlePlayerActionChoice(player, context, actionChoice);
             return;
         }
@@ -294,7 +297,7 @@ public class BattleController {
             observer.displayMessage((aliveEnemies.size() + 1) + ". Back");
         }
 
-        int targetChoice = readInt(1, aliveEnemies.size() + 1);
+        int targetChoice = console.readIntInRange(1, aliveEnemies.size() + 1);
         if (targetChoice == aliveEnemies.size() + 1) {
             return null;
         }
@@ -311,7 +314,7 @@ public class BattleController {
             observer.displayMessage((inventory.size() + 1) + ". Back");
         }
 
-        int itemChoice = readInt(1, inventory.size() + 1);
+        int itemChoice = console.readIntInRange(1, inventory.size() + 1);
         if (itemChoice == inventory.size() + 1) {
             return -1;
         }
@@ -335,7 +338,7 @@ public class BattleController {
             observer.displayMessage((aliveEnemies.size() + 2) + ". Back");
         }
 
-        int targetChoice = readInt(1, aliveEnemies.size() + 2);
+        int targetChoice = console.readIntInRange(1, aliveEnemies.size() + 2);
         if (targetChoice == aliveEnemies.size() + 2) {
             return null;
         }
@@ -355,23 +358,6 @@ public class BattleController {
         return aliveEnemies;
     }
 
-    private int readInt(int min, int max) {
-        while (true) {
-            String line = UserInput.SCANNER.nextLine().trim();
-            try {
-                int value = Integer.parseInt(line);
-                if (value >= min && value <= max) {
-                    return value;
-                }
-            } catch (NumberFormatException ignored) {
-                // continue to invalid input message
-            }
-
-            if (observer != null) {
-                observer.displayMessage("Invalid input. Enter a number from " + min + " to " + max + ".");
-            }
-        }
-    }
 
     private Player findFirstAlivePlayer() {
         for (Entity entity : entities) {

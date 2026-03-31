@@ -13,10 +13,12 @@ import sc2002.combat.core.items.PotionItem;
 import sc2002.combat.core.items.PowerStoneItem;
 import sc2002.combat.core.items.SmokeBombItem;
 import sc2002.combat.ui.IBattleObserver;
+import sc2002.combat.ui.CombatConsole;
 
 public class GameInitialiser {
     private final BattleController engine;
     private final IBattleObserver observer;
+    private final CombatConsole console;
 
     // Store settings for replay
     private String lastPlayerName;
@@ -24,16 +26,17 @@ public class GameInitialiser {
     private final List<Integer> lastItemChoices;
     private String lastDifficulty;
 
-    public GameInitialiser(BattleController engine, IBattleObserver observer) {
+    public GameInitialiser(BattleController engine, CombatConsole console) {
         this.engine = engine;
-        this.observer = observer;
+        this.console = console;
+        this.observer = console;
         this.lastItemChoices = new ArrayList<>();
     }
 
     public void start() {
         displayLoadingScreenDetails();
 
-        lastPlayerName = askNonEmpty("Enter your player name:");
+        lastPlayerName = console.readNonEmpty("Enter your player name:");
         lastClassChoice = askClassChoice();
 
         Player player = setupPlayer(lastPlayerName, lastClassChoice);
@@ -69,7 +72,7 @@ public class GameInitialiser {
             display("2. Start a new game (return to home screen)");
             display("3. Exit");
 
-            String input = UserInput.SCANNER.nextLine().trim();
+            String input = console.readLineTrim();
             if (null != input)
                 switch (input) {
                     case "1" -> {
@@ -111,7 +114,7 @@ public class GameInitialiser {
 
             for (int i = 1; i <= 2; i++) {
                 display("Select Item " + i + ":");
-                int choice = readIntInRange(1, 3);
+                int choice = console.readIntInRange(1, 3);
                 lastItemChoices.add(choice);
                 addItemToInventory(player, choice);
             }
@@ -193,7 +196,7 @@ public class GameInitialiser {
             display("Choose class:");
             display("1. Warrior");
             display("2. Wizard");
-            String input = UserInput.SCANNER.nextLine().trim();
+            String input = console.readLineTrim();
 
             if ("1".equals(input) || "2".equals(input)) {
                 return input;
@@ -209,7 +212,7 @@ public class GameInitialiser {
             display("1. Easy");
             display("2. Medium");
             display("3. Hard");
-            String input = UserInput.SCANNER.nextLine().trim();
+            String input = console.readLineTrim();
 
             if ("1".equals(input)) {
                 return "Easy";
@@ -222,32 +225,6 @@ public class GameInitialiser {
             }
 
             display("Invalid difficulty choice. Enter 1, 2, or 3.");
-        }
-    }
-
-    private String askNonEmpty(String prompt) {
-        while (true) {
-            display(prompt);
-            String input = UserInput.SCANNER.nextLine().trim();
-            if (!input.isEmpty()) {
-                return input;
-            }
-            display("Input cannot be empty.");
-        }
-    }
-
-    private int readIntInRange(int min, int max) {
-        while (true) {
-            String line = UserInput.SCANNER.nextLine().trim();
-            try {
-                int value = Integer.parseInt(line);
-                if (value >= min && value <= max) {
-                    return value;
-                }
-            } catch (NumberFormatException ignored) {
-                // handled by retry message below
-            }
-            display("Invalid input. Enter a number from " + min + " to " + max + ".");
         }
     }
 

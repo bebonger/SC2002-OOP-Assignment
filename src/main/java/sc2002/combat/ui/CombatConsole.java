@@ -1,9 +1,11 @@
 package sc2002.combat.ui;
 
+import java.util.Scanner;
 import sc2002.combat.core.entities.Entity;
 
 public class CombatConsole implements IBattleObserver {
     private static final String DIVIDER = "--------------------------------------------------";
+    private final Scanner scanner = new Scanner(System.in);
 
     @Override
     public void onRoundStart(int roundNumber) {
@@ -111,4 +113,32 @@ public class CombatConsole implements IBattleObserver {
         System.out.println(message);
     }
 
+    public String readLineTrim() {
+    return scanner.nextLine().trim();
+    }
+
+    public String readNonEmpty(String prompt) {
+        while (true) {
+            displayMessage(prompt);
+            String input = scanner.nextLine().trim();
+            if (!input.isEmpty()) {
+                return input;
+            }
+            displayMessage("Input cannot be empty.");
+        }
+    }
+
+    public int readIntInRange(int min, int max) {
+        while (true) {
+            String line = scanner.nextLine().trim();
+            try {
+                int value = Integer.parseInt(line);
+                if (value >= min && value <= max) {
+                    return value;
+                }
+            } catch (NumberFormatException ignored) {
+            }
+            displayMessage("Invalid input. Enter a number from " + min + " to " + max + ".");
+        }
+    }
 }
