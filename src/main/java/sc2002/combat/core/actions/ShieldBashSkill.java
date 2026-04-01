@@ -3,8 +3,9 @@ package sc2002.combat.core.actions;
 import sc2002.combat.core.effects.StunEffect;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.utils.BattleContext;
+import sc2002.combat.core.items.ITargetable; 
 
-public class ShieldBashSkill implements ISpecialSkillAction {
+public class ShieldBashSkill implements ISpecialSkillAction, ITargetable {
 
     @Override
     public void execute(Entity attacker, Entity target, BattleContext context) {

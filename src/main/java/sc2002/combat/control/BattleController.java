@@ -247,13 +247,13 @@ public class BattleController {
                     return false;
                 }
 
-                Entity target = chooseEnemyTarget();
-                if (target != null) {
-                    player.useSpecialSkill(target, context);
-                    return true;
-                }
-                return false;
+                Entity target = null;
+                if (player.getSpecialSkill() instanceof ITargetable) target = chooseEnemyTarget();
+
+                player.useSpecialSkill(target, context);
+                return true;
             }
+
             default -> {
                 if (player.getInventory().isEmpty()) {
                     if (observer != null) {
@@ -269,7 +269,7 @@ public class BattleController {
 
                 IItem item = player.getInventory().get(itemIndex);
                 if (item instanceof ITargetable) {
-                    Entity target = chooseItemTarget();
+                    Entity target = chooseEnemyTarget();
                     if (target != null) {
                         new ItemAction(itemIndex).execute(player, target, context);
                         return true;
