@@ -1,7 +1,7 @@
 package sc2002.combat.ui;
 
-import java.util.Scanner;
 import java.util.List;
+import java.util.Scanner;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.items.IItem;
 
@@ -181,9 +181,9 @@ public class CombatConsole implements IBattleObserver {
     }
 
     @Override
-    public int promptForTargetSelection(List<Entity> enemies, boolean allowBack) {
+    public Entity promptForTargetSelection(List<Entity> enemies, boolean allowBack) {
         if (enemies == null || enemies.isEmpty()) {
-            return -1;
+            return null;
         }
 
         displayMessage("Choose target:");
@@ -198,7 +198,12 @@ public class CombatConsole implements IBattleObserver {
             max++;
         }
 
-        return readIntInRange(1, max);
+        int choice = readIntInRange(1, max);
+
+        displayMessage("" + choice);
+        if (allowBack && choice == max) return null;
+
+        return enemies.get(choice - 1);
     }
 
     @Override
