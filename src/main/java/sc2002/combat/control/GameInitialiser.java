@@ -110,7 +110,6 @@ public class GameInitialiser {
             display("3. Smoke Bomb - Dodge attacks for 2 turns");
 
             for (int i = 1; i <= 2; i++) {
-                display("Select Item " + i + ":");
                 int choice = observer.promptForStarterItemSelection(i);
                 lastItemChoices.add(choice);
                 addItemToInventory(player, choice);
