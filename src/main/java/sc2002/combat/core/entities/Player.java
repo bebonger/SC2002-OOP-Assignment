@@ -5,7 +5,6 @@ import java.util.List;
 import sc2002.combat.core.actions.ISpecialSkillAction;
 import sc2002.combat.core.items.IItem;
 import sc2002.combat.core.utils.BattleContext;
-import sc2002.combat.core.items.ITargetable;
 
 public abstract class Player extends Entity {
     protected List<IItem> inventory;
