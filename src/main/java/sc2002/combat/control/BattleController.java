@@ -13,7 +13,7 @@ import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.items.IItem;
 import sc2002.combat.core.utils.BattleContext;
 import sc2002.combat.ui.IBattleObserver;
-import sc2002.combat.utils.ITargetable;
+import sc2002.combat.core.utils.ITargetable;
 
 public class BattleController {
 

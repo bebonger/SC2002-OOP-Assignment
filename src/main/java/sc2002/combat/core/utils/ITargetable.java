@@ -1,4 +1,4 @@
-package sc2002.combat.utils;
+package sc2002.combat.core.utils;
 
 public interface ITargetable {
     

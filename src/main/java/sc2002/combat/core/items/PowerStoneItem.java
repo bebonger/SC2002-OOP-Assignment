@@ -3,7 +3,7 @@ package sc2002.combat.core.items;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.utils.BattleContext;
-import sc2002.combat.utils.ITargetable;
+import sc2002.combat.core.utils.ITargetable;
 
 public class PowerStoneItem implements IItem, ITargetable {
     @Override
