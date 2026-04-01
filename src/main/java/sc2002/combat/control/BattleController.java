@@ -203,19 +203,8 @@ public class BattleController {
     }
 
     private void processPlayerTurn(Player player, BattleContext context) {
-        while (true) {
-            if (observer != null) {
-                observer.displayMessage("Choose action:");
-                observer.displayMessage("1. Basic Attack");
-                observer.displayMessage("2. Defend");
-                observer.displayMessage("3. Special Skill (Cooldown: " + player.getCurrentCooldown() + ")");
-                observer.displayMessage("4. Use Item");
-            }
-
-            int actionChoice = readInt(1, 4);
-            handlePlayerActionChoice(player, context, actionChoice);
-            return;
-        }
+        int actionChoice = observer.promptForActionSelection(player.getCurrentCooldown());
+        handlePlayerActionChoice(player, context, actionChoice);
     }
 
     private boolean handlePlayerActionChoice(Player player, BattleContext context, int actionChoice) {
@@ -292,16 +281,7 @@ public class BattleController {
             return null;
         }
 
-        if (observer != null) {
-            observer.displayMessage("Choose target:");
-            for (int i = 0; i < aliveEnemies.size(); i++) {
-                Entity enemy = aliveEnemies.get(i);
-                observer.displayMessage((i + 1) + ". " + enemy.getName() + " (HP: " + enemy.getHp() + ")");
-            }
-            observer.displayMessage((aliveEnemies.size() + 1) + ". Back");
-        }
-
-        int targetChoice = readInt(1, aliveEnemies.size() + 1);
+        int targetChoice = observer.promptForTargetSelection(aliveEnemies, true);
         if (targetChoice == aliveEnemies.size() + 1) {
             return null;
         }
@@ -310,15 +290,8 @@ public class BattleController {
 
     private int chooseItemIndex(Player player) {
         List<IItem> inventory = player.getInventory();
-        if (observer != null) {
-            observer.displayMessage("Choose item:");
-            for (int i = 0; i < inventory.size(); i++) {
-                observer.displayMessage((i + 1) + ". " + inventory.get(i).getName());
-            }
-            observer.displayMessage((inventory.size() + 1) + ". Back");
-        }
 
-        int itemChoice = readInt(1, inventory.size() + 1);
+        int itemChoice = observer.promptForItemSelection(inventory, true);
         if (itemChoice == inventory.size() + 1) {
             return -1;
         }
@@ -332,17 +305,8 @@ public class BattleController {
         }
 
         List<Entity> aliveEnemies = getAliveEnemies();
-        if (observer != null) {
-            observer.displayMessage("Choose item target:");
-            observer.displayMessage("1. " + player.getName() + " (Self)");
-            for (int i = 0; i < aliveEnemies.size(); i++) {
-                Entity enemy = aliveEnemies.get(i);
-                observer.displayMessage((i + 2) + ". " + enemy.getName() + " (HP: " + enemy.getHp() + ")");
-            }
-            observer.displayMessage((aliveEnemies.size() + 2) + ". Back");
-        }
 
-        int targetChoice = readInt(1, aliveEnemies.size() + 2);
+        int targetChoice = observer.promptForItemTargetSelection(player, aliveEnemies, true);
         if (targetChoice == aliveEnemies.size() + 2) {
             return null;
         }
@@ -362,23 +326,6 @@ public class BattleController {
         return aliveEnemies;
     }
 
-    private int readInt(int min, int max) {
-        while (true) {
-            String line = UserInput.SCANNER.nextLine().trim();
-            try {
-                int value = Integer.parseInt(line);
-                if (value >= min && value <= max) {
-                    return value;
-                }
-            } catch (NumberFormatException ignored) {
-                // continue to invalid input message
-            }
-
-            if (observer != null) {
-                observer.displayMessage("Invalid input. Enter a number from " + min + " to " + max + ".");
-            }
-        }
-    }
 
     private Player findFirstAlivePlayer() {
         for (Entity entity : entities) {
