@@ -11,9 +11,9 @@ import sc2002.combat.core.entities.Enemy;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.items.IItem;
+import sc2002.combat.core.items.ITargetable;
 import sc2002.combat.core.utils.BattleContext;
 import sc2002.combat.ui.IBattleObserver;
-import sc2002.combat.core.items.ITargetable;
 
 public class BattleController {
     private enum BattleOutcome {
@@ -258,7 +258,7 @@ public class BattleController {
 
                 IItem item = player.getInventory().get(itemIndex);
                 if (item instanceof ITargetable) {
-                    Entity target = chooseItemTarget();
+                    Entity target = chooseEnemyTarget();
                     if (target != null) {
                         new ItemAction(itemIndex).execute(player, target, context);
                         return true;
