@@ -63,9 +63,7 @@ public class BattleController {
             roundCount++;
 
             BattleContext context = new BattleContext(entities, this.observer);
-            if (observer != null) {
-                observer.onRoundStart(roundCount);
-            }
+            observer.onRoundStart(roundCount);
 
             turnStrategy.sort(entities);
 
@@ -96,30 +94,28 @@ public class BattleController {
 
                 if (outcome != BattleOutcome.ONGOING) {
                     isBattleOngoing = false;
-                    if (observer != null) {
-                        int remainingDetail = 0;
-                        boolean playerAlive = outcome == BattleOutcome.PLAYER_WIN;
-                        if (playerAlive) {
-                            for (Entity e : entities) {
-                                if (e == null) {
-                                    continue;
-                                }
-                                if (e instanceof Player) {
-                                    remainingDetail = e.getHp();
-                                }
+                    int remainingDetail = 0;
+                    boolean playerAlive = outcome == BattleOutcome.PLAYER_WIN;
+                    if (playerAlive) {
+                        for (Entity e : entities) {
+                            if (e == null) {
+                                continue;
                             }
-                        } else {
-                            for (Entity e : entities) {
-                                if (e == null) {
-                                    continue;
-                                }
-                                if (!(e instanceof Player) && e.isAlive()) {
-                                    remainingDetail++;
-                                }
+                            if (e instanceof Player) {
+                                remainingDetail = e.getHp();
                             }
                         }
-                        observer.onGameOver(playerAlive, roundCount, remainingDetail);
+                    } else {
+                        for (Entity e : entities) {
+                            if (e == null) {
+                                continue;
+                            }
+                            if (!(e instanceof Player) && e.isAlive()) {
+                                remainingDetail++;
+                            }
+                        }
                     }
+                    observer.onGameOver(playerAlive, roundCount, remainingDetail);
                     break;
                 }
 
@@ -176,15 +172,11 @@ public class BattleController {
         current.setCanTakeAction(true);
         current.updateStatusEffects(context);
         if (!current.canTakeAction() || !current.isAlive()) {
-            if (observer != null) {
-                observer.displayMessage(current.getName() + " is unable to act this turn.");
-            }
+            observer.displayMessage(current.getName() + " is unable to act this turn.");
             return;
         }
 
-        if (observer != null) {
-            observer.onTurnStart(current);
-        }
+        observer.onTurnStart(current);
 
         if (current instanceof Player player) {
             player.updateCooldown();
