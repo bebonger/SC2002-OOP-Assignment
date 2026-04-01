@@ -1,7 +1,6 @@
 package sc2002.combat.ui;
 
 import java.util.List;
-
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.items.IItem;
 
@@ -32,7 +31,7 @@ public interface IBattleObserver {
     int promptForClassSelection();
     int promptForDifficultySelection();
     int promptForStarterItemSelection(int itemNumber);
-    int promptForTargetSelection(List<Entity> enemies, boolean allowBack);
+    Entity promptForTargetSelection(List<Entity> enemies, boolean allowBack);
     int promptForItemSelection(List<IItem> items, boolean allowBack);
     int promptForItemTargetSelection(Entity self, List<Entity> enemies, boolean allowBack);
 }

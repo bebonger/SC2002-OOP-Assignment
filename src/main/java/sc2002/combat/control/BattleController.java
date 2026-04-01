@@ -16,6 +16,7 @@ import sc2002.combat.ui.IBattleObserver;
 import sc2002.combat.utils.ITargetable;
 
 public class BattleController {
+
     private enum BattleOutcome {
         ONGOING,
         PLAYER_WIN,
@@ -62,9 +63,7 @@ public class BattleController {
             roundCount++;
 
             BattleContext context = new BattleContext(entities, this.observer);
-            if (observer != null) {
-                observer.onRoundStart(roundCount);
-            }
+            observer.onRoundStart(roundCount);
 
             turnStrategy.sort(entities);
 
@@ -95,28 +94,28 @@ public class BattleController {
 
                 if (outcome != BattleOutcome.ONGOING) {
                     isBattleOngoing = false;
-                    if (observer != null) {
-                        int remainingDetail = 0;
-                        boolean playerAlive = outcome == BattleOutcome.PLAYER_WIN;
-                        if (playerAlive) {
-                            for (Entity e : entities) {
-                                if (e == null) {
-                                    continue;
-                                }
-                                if (e instanceof Player)
-                                    remainingDetail = e.getHp();
+                    int remainingDetail = 0;
+                    boolean playerAlive = outcome == BattleOutcome.PLAYER_WIN;
+                    if (playerAlive) {
+                        for (Entity e : entities) {
+                            if (e == null) {
+                                continue;
                             }
-                        } else {
-                            for (Entity e : entities) {
-                                if (e == null) {
-                                    continue;
-                                }
-                                if (!(e instanceof Player) && e.isAlive())
-                                    remainingDetail++;
+                            if (e instanceof Player) {
+                                remainingDetail = e.getHp();
                             }
                         }
-                        observer.onGameOver(playerAlive, roundCount, remainingDetail);
+                    } else {
+                        for (Entity e : entities) {
+                            if (e == null) {
+                                continue;
+                            }
+                            if (!(e instanceof Player) && e.isAlive()) {
+                                remainingDetail++;
+                            }
+                        }
                     }
+                    observer.onGameOver(playerAlive, roundCount, remainingDetail);
                     break;
                 }
 
@@ -173,15 +172,11 @@ public class BattleController {
         current.setCanTakeAction(true);
         current.updateStatusEffects(context);
         if (!current.canTakeAction() || !current.isAlive()) {
-            if (observer != null) {
-                observer.displayMessage(current.getName() + " is unable to act this turn.");
-            }
+            observer.displayMessage(current.getName() + " is unable to act this turn.");
             return;
         }
 
-        if (observer != null) {
-            observer.onTurnStart(current);
-        }
+        observer.onTurnStart(current);
 
         if (current instanceof Player player) {
             player.updateCooldown();
@@ -203,8 +198,11 @@ public class BattleController {
     }
 
     private void processPlayerTurn(Player player, BattleContext context) {
-        int actionChoice = observer.promptForActionSelection(player.getCurrentCooldown());
-        handlePlayerActionChoice(player, context, actionChoice);
+        boolean validInput = false;
+        while (!validInput) {
+            int actionChoice = observer.promptForActionSelection(player.getCurrentCooldown());
+            validInput = handlePlayerActionChoice(player, context, actionChoice);
+        }
     }
 
     private boolean handlePlayerActionChoice(Player player, BattleContext context, int actionChoice) {
@@ -223,16 +221,12 @@ public class BattleController {
             }
             case 3 -> {
                 if (player.getSpecialSkill() == null) {
-                    if (observer != null) {
-                        observer.displayMessage("No special skill available.");
-                    }
+                    observer.displayMessage("No special skill available.");
                     return false;
                 }
 
                 if (player.getCurrentCooldown() > 0) {
-                    if (observer != null) {
-                        observer.displayMessage("Special skill is on cooldown.");
-                    }
+                    observer.displayMessage("Special skill is on cooldown.");
                     return false;
                 }
 
@@ -243,11 +237,9 @@ public class BattleController {
                 }
                 return false;
             }
-            default -> {
+            case 4 -> {
                 if (player.getInventory().isEmpty()) {
-                    if (observer != null) {
-                        observer.displayMessage("No items in inventory.");
-                    }
+                    observer.displayMessage("No items in inventory."); 
                     return false;
                 }
 
@@ -267,25 +259,19 @@ public class BattleController {
                 } else {
                     new ItemAction(itemIndex).execute(player, player, context);
                     return true;
+                }
             }
         }
+        return false;
     }
-}
 
     private Entity chooseEnemyTarget() {
         List<Entity> aliveEnemies = getAliveEnemies();
         if (aliveEnemies.isEmpty()) {
-            if (observer != null) {
-                observer.displayMessage("No enemy targets available.");
-            }
+            observer.displayMessage("No enemy targets available.");
             return null;
         }
-
-        int targetChoice = observer.promptForTargetSelection(aliveEnemies, true);
-        if (targetChoice == aliveEnemies.size() + 1) {
-            return null;
-        }
-        return aliveEnemies.get(targetChoice - 1);
+        return observer.promptForTargetSelection(aliveEnemies, true);
     }
 
     private int chooseItemIndex(Player player) {
@@ -298,25 +284,6 @@ public class BattleController {
         return itemChoice - 1;
     }
 
-    // Unused function since we don't have items that should be allowed to cast on both enemies and player.
-    private Entity chooseItemTarget() {
-        Player player = findFirstAlivePlayer();
-        if (player == null) {
-            return null;
-        }
-
-        List<Entity> aliveEnemies = getAliveEnemies();
-
-        int targetChoice = observer.promptForItemTargetSelection(player, aliveEnemies, true);
-        if (targetChoice == aliveEnemies.size() + 2) {
-            return null;
-        }
-        if (targetChoice == 1) {
-            return player;
-        }
-        return aliveEnemies.get(targetChoice - 2);
-    }
-
     private List<Entity> getAliveEnemies() {
         List<Entity> aliveEnemies = new ArrayList<>();
         for (Entity entity : entities) {
@@ -326,7 +293,6 @@ public class BattleController {
         }
         return aliveEnemies;
     }
-
 
     private Player findFirstAlivePlayer() {
         for (Entity entity : entities) {
