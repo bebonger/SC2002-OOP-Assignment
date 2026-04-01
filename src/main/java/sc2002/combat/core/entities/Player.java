@@ -5,6 +5,7 @@ import java.util.List;
 import sc2002.combat.core.actions.ISpecialSkillAction;
 import sc2002.combat.core.items.IItem;
 import sc2002.combat.core.utils.BattleContext;
+import sc2002.combat.core.items.ITargetable;
 
 public abstract class Player extends Entity {
     protected List<IItem> inventory;
@@ -18,6 +19,7 @@ public abstract class Player extends Entity {
     }
 
     public void useItem(int index, Entity target, BattleContext context) {
+        
         if (index >= 0 && index < inventory.size()) {
             IItem item = inventory.remove(index);
             item.use(this, target, context);
