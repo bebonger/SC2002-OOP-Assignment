@@ -229,16 +229,12 @@ public class BattleController {
             }
             case 3 -> {
                 if (player.getSpecialSkill() == null) {
-                    if (observer != null) {
-                        observer.displayMessage("No special skill available.");
-                    }
+                    observer.displayMessage("No special skill available.");
                     return false;
                 }
 
                 if (player.getCurrentCooldown() > 0) {
-                    if (observer != null) {
-                        observer.displayMessage("Special skill is on cooldown.");
-                    }
+                    observer.displayMessage("Special skill is on cooldown.");
                     return false;
                 }
 
@@ -249,11 +245,9 @@ public class BattleController {
                 }
                 return false;
             }
-            default -> {
+            case 4 -> {
                 if (player.getInventory().isEmpty()) {
-                    if (observer != null) {
-                        observer.displayMessage("No items in inventory.");
-                    }
+                    observer.displayMessage("No items in inventory."); 
                     return false;
                 }
 
@@ -276,6 +270,7 @@ public class BattleController {
                 }
             }
         }
+        return false;
     }
 
     private Entity chooseEnemyTarget() {
