@@ -2,9 +2,7 @@ package sc2002.combat.control;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import sc2002.combat.core.actions.BasicAttackAction;
 import sc2002.combat.core.actions.DefendAction;
@@ -209,19 +207,16 @@ public class BattleController {
     }
 
     private boolean handlePlayerActionChoice(Player player, BattleContext context, int actionChoice) {
-        Map<Integer, BooleanSupplier> actionHandlers = Map.of(
-                1, () -> handleBasicAttack(player, context),
-                2, () -> handleDefend(player, context),
-                3, () -> handleSpecialSkill(player, context),
-                4, () -> handleItemUse(player, context));
-
-        BooleanSupplier actionHandler = actionHandlers.get(actionChoice);
-        if (actionHandler == null) {
-            observer.displayMessage("Invalid action.");
-            return false;
-        }
-
-        return actionHandler.getAsBoolean();
+        return switch (actionChoice) {
+            case 1 -> handleBasicAttack(player, context);
+            case 2 -> handleDefend(player, context);
+            case 3 -> handleSpecialSkill(player, context);
+            case 4 -> handleItemUse(player, context);
+            default -> {
+                observer.displayMessage("Invalid action.");
+                yield false;
+            }
+        };
     }
 
     private boolean handleBasicAttack(Player player, BattleContext context) {
