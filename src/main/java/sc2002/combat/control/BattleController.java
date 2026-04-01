@@ -298,6 +298,7 @@ public class BattleController {
         return itemChoice - 1;
     }
 
+    // Unused function since we don't have items that should be allowed to cast on both enemies and player.
     private Entity chooseItemTarget() {
         Player player = findFirstAlivePlayer();
         if (player == null) {
