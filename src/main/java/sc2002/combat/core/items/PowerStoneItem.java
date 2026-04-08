@@ -16,7 +16,7 @@ public class PowerStoneItem implements IItem {
     @Override
     public void use(Player user, Entity target, BattleContext context) {
         // trigger skill immediately without cooldown reset
-        context.getObserver().onItemUsed(user, "Power Stone", target);
+        context.getBoundary().onItemUsed(user, "Power Stone", target);
         imbuedSkill.execute(user, target, context);
     }
 

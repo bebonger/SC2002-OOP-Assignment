@@ -12,11 +12,11 @@ import sc2002.combat.core.entities.Wolf;
 import sc2002.combat.core.items.PotionItem;
 import sc2002.combat.core.items.PowerStoneItem;
 import sc2002.combat.core.items.SmokeBombItem;
-import sc2002.combat.ui.IBattleObserver;
+import sc2002.combat.ui.ICombatBoundary;
 
 public class GameInitialiser {
-    private final BattleController engine;
-    private final IBattleObserver observer;
+    private final CombatController engine;
+    private final ICombatBoundary observer;
 
     // Store settings for replay
     private String lastPlayerName;
@@ -24,7 +24,7 @@ public class GameInitialiser {
     private final List<Integer> lastItemChoices;
     private String lastDifficulty;
 
-    public GameInitialiser(BattleController engine, IBattleObserver observer) {
+    public GameInitialiser(CombatController engine, ICombatBoundary observer) {
         this.engine = engine;
         this.observer = observer;
         this.lastItemChoices = new ArrayList<>();

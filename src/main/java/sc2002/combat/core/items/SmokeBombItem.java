@@ -10,7 +10,7 @@ public class SmokeBombItem implements IItem {
     @Override
     public void use(Player user, Entity target, BattleContext context) {
         user.addStatusEffect(new SmokeBombEffect(2));
-        context.getObserver().onItemUsed(user, "Smoke Bomb", target);
+        context.getBoundary().onItemUsed(user, "Smoke Bomb", target);
     }
 
     @Override

@@ -11,7 +11,7 @@ import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.items.IItem;
 import sc2002.combat.core.utils.BattleContext;
 
-public class CombatConsole implements IBattleObserver {
+public class CombatConsole implements ICombatBoundary {
     private static final String DIVIDER = "--------------------------------------------------";
     private final Scanner scanner = new Scanner(System.in);
 
@@ -125,6 +125,7 @@ public class CombatConsole implements IBattleObserver {
     public String readLineTrim() {
         return scanner.nextLine().trim();
     }
+
 
     @Override
     public String readNonEmpty(String prompt) {

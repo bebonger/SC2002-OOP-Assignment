@@ -10,8 +10,8 @@ public class BasicAttackAction implements IAction {
         int damage = Math.max(1, attacker.getEffectiveAttack());
         int finalDamage = target.takeDamage(damage);
 
-        context.getObserver().onActionExecuted(attacker, "Basic Attack", target);
-        context.getObserver().onDamageDealt(target, finalDamage, target.getHp(), !target.isAlive());
+        context.getBoundary().onActionExecuted(attacker, "Basic Attack", target);
+        context.getBoundary().onDamageDealt(target, finalDamage, target.getHp(), !target.isAlive());
     }
 
     @Override 

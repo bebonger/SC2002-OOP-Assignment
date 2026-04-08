@@ -56,7 +56,7 @@ public abstract class Entity {
             effect.onTurnStart(this, context);
 
             if (effect.isExpired()) {
-                context.getObserver().onStatusEffectExpired(this, effect.getName());
+                context.getBoundary().onStatusEffectExpired(this, effect.getName());
                 statusEffects.remove(i);
             }
         }

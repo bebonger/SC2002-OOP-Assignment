@@ -9,7 +9,7 @@ public class PotionItem implements IItem {
     @Override
     public void use(Player user, Entity target, BattleContext context) {
         user.heal(100);
-        context.getObserver().onItemUsed(user, "Health Potion", target);
+        context.getBoundary().onItemUsed(user, "Health Potion", target);
     }
 
     @Override

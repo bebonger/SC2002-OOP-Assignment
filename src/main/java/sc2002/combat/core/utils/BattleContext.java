@@ -3,15 +3,15 @@ package sc2002.combat.core.utils;
 import java.util.Collections;
 import java.util.List;
 import sc2002.combat.core.entities.Entity;
-import sc2002.combat.ui.IBattleObserver;
+import sc2002.combat.ui.ICombatBoundary;
 
 public class BattleContext {
     private final List<Entity> entityList;
-    private final IBattleObserver observer;
+    private final ICombatBoundary boundary;
 
-    public BattleContext(List<Entity> entityList, IBattleObserver observer) {
+    public BattleContext(List<Entity> entityList, ICombatBoundary boundary) {
         this.entityList = entityList;
-        this.observer = observer;
+        this.boundary = boundary;
     }
 
     // DO NOT MESS WITH BATTLECONTROLLER LIST STRUCTURE
@@ -19,7 +19,7 @@ public class BattleContext {
         return Collections.unmodifiableList(entityList);
     }
 
-    public IBattleObserver getObserver() {
-        return observer;
+    public ICombatBoundary getBoundary() {
+        return boundary;
     }
 }

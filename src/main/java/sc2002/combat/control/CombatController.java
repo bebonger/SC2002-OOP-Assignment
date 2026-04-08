@@ -9,9 +9,9 @@ import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.utils.BattleContext;
 import sc2002.combat.core.utils.TargetRequirement;
-import sc2002.combat.ui.IBattleObserver;
+import sc2002.combat.ui.ICombatBoundary;
 
-public class BattleController {
+public class CombatController {
 
     private enum BattleOutcome {
         ONGOING,
@@ -21,13 +21,13 @@ public class BattleController {
 
     private final List<Entity> entities;
     private final List<Entity> backupEnemies;
-    private final IBattleObserver observer;
+    private final ICombatBoundary boundary;
     private final ITurnOrderStrategy turnStrategy;
     private int roundCount;
     private boolean backupSpawned;
 
-    public BattleController(IBattleObserver observer) {
-        this.observer = observer;
+    public CombatController(ICombatBoundary boundary) {
+        this.boundary = boundary;
         this.entities = new ArrayList<>();
         this.backupEnemies = new ArrayList<>();
         this.turnStrategy = new SpeedComparator();
@@ -58,8 +58,8 @@ public class BattleController {
         while (isBattleOngoing) {
             roundCount++;
 
-            BattleContext context = new BattleContext(entities, this.observer);
-            observer.onRoundStart(roundCount);
+            BattleContext context = new BattleContext(entities, this.boundary);
+            boundary.onRoundStart(roundCount);
 
             turnStrategy.sort(entities);
 
@@ -77,8 +77,8 @@ public class BattleController {
                     // Trigger Backup Spawn
                     entities.addAll(backupEnemies);
                     backupSpawned = true;
-                    if (observer != null) {
-                        observer.displayMessage("Backup enemies have spawned!");
+                    if (boundary != null) {
+                        boundary.displayMessage("Backup enemies have spawned!");
                     }
 
                     for (Entity backup : backupEnemies) {
@@ -111,7 +111,7 @@ public class BattleController {
                             }
                         }
                     }
-                    observer.onGameOver(playerAlive, roundCount, remainingDetail);
+                    boundary.onGameOver(playerAlive, roundCount, remainingDetail);
                     break;
                 }
 
@@ -119,7 +119,7 @@ public class BattleController {
                 try {
                     TimeUnit.MILLISECONDS.sleep(500);
                 } catch (InterruptedException ex) {
-                    System.getLogger(BattleController.class.getName()).log(System.Logger.Level.ERROR, (String) null,
+                    System.getLogger(CombatController.class.getName()).log(System.Logger.Level.ERROR, (String) null,
                             ex);
                 }
 
@@ -168,11 +168,11 @@ public class BattleController {
         current.setCanTakeAction(true);
         current.updateStatusEffects(context);
         if (!current.canTakeAction() || !current.isAlive()) {
-            observer.displayMessage(current.getName() + " is unable to act this turn.");
+            boundary.displayMessage(current.getName() + " is unable to act this turn.");
             return;
         }
 
-        observer.onTurnStart(current);
+        boundary.onTurnStart(current);
 
         if (current instanceof Player player) {
             processPlayerTurn(player, context);
@@ -197,16 +197,16 @@ public class BattleController {
         boolean validAction = false;
 
         while (!validAction) {
-            IAction action = context.getObserver().promptForActionSelection(player, context);
+            IAction action = context.getBoundary().promptForActionSelection(player, context);
             if (action.requiresCooldown()) {
                 if (player.getCurrentCooldown() > 0) {
-                    observer.displayMessage("Action is on cooldown.");
+                    boundary.displayMessage("Action is on cooldown.");
                     continue;
                 }
             }
 
             if (action.getTargetRequirement() != TargetRequirement.NONE) {
-                Entity target = context.getObserver().promptForTargetSelection(context.getEntities(), true, false);
+                Entity target = context.getBoundary().promptForTargetSelection(context.getEntities(), true, false);
                 if (target == null) continue;
 
                 action.execute(player, target, context);

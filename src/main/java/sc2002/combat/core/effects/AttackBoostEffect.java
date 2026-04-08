@@ -22,7 +22,7 @@ public class AttackBoostEffect extends StatusEffect {
     public void onTurnStart(Entity owner, BattleContext context) {
         super.onTurnStart(owner, context);
         if (context != null && duration > 0) {
-            context.getObserver()
+            context.getBoundary()
                     .displayMessage(owner.getName() + " feels a surge of strength! (+" + boostAmount + " ATK)");
         }
     }

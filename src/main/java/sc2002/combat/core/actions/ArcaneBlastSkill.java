@@ -9,8 +9,8 @@ public class ArcaneBlastSkill implements ISpecialSkillAction {
 
     @Override
     public void execute(Entity attacker, Entity ignored, BattleContext context) {
-        context.getObserver().onActionExecuted(attacker, "Arcane Blast", null);
-        context.getObserver().displayMessage(attacker.getName() + " unleashes a wave of magical energy!");
+        context.getBoundary().onActionExecuted(attacker, "Arcane Blast", null);
+        context.getBoundary().displayMessage(attacker.getName() + " unleashes a wave of magical energy!");
 
         for (Entity e : context.getEntities()) {
             if (!(e instanceof Enemy))
@@ -20,11 +20,11 @@ public class ArcaneBlastSkill implements ISpecialSkillAction {
                 int damage = Math.max(1, attacker.getEffectiveAttack());
                 int finalDamage = e.takeDamage(damage);
                 
-                context.getObserver().onDamageDealt(e, finalDamage, e.getHp(), !e.isAlive());
+                context.getBoundary().onDamageDealt(e, finalDamage, e.getHp(), !e.isAlive());
 
                 if (!e.isAlive()) {
                     attacker.increaseBaseAttack(10);
-                    context.getObserver().displayMessage(attacker.getName() + " gains +10 ATK from the blast!");
+                    context.getBoundary().displayMessage(attacker.getName() + " gains +10 ATK from the blast!");
                 }
             }
         }
