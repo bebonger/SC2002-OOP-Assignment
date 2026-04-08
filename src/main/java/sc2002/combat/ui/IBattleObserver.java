@@ -30,13 +30,10 @@ public interface IBattleObserver {
     String readNonEmpty(String prompt);
     int readIntInRange(int min, int max);
 
-    int promptForActionSelection(int cooldown);
+    IAction promptForActionSelection(Player player, BattleContext context);
     int promptForClassSelection();
     int promptForDifficultySelection();
     int promptForStarterItemSelection(int itemNumber);
     Entity promptForTargetSelection(List<Entity> enemies, boolean allowBack);
     int promptForItemSelection(List<IItem> items, boolean allowBack);
-    int promptForItemTargetSelection(Entity self, List<Entity> enemies, boolean allowBack);
-    
-    IAction requestAction(Player player, BattleContext context);
 }

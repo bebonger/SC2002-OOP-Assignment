@@ -154,13 +154,37 @@ public class CombatConsole implements IBattleObserver {
     }
 
     @Override
-    public int promptForActionSelection(int cooldown) {
+    public IAction promptForActionSelection(Player player, BattleContext context) {
         displayMessage("Choose action:");
         displayMessage("1. Basic Attack");
         displayMessage("2. Defend");
-        displayMessage("3. Special Skill (Cooldown: " + cooldown + ")");
+        displayMessage("3. Special Skill (Cooldown: " + player.getCurrentCooldown() + ")");
         displayMessage("4. Use Item");
-        return readIntInRange(1, 4);
+        
+        while (true) {
+            int choice = readIntInRange(1, 4);
+            displayMessage("choice: " + choice);
+            switch (choice) {
+                case 1 -> { // Attack
+                    return new BasicAttackAction();
+                }
+                case 2 -> { // Defend
+                    return new DefendAction();
+                }
+                case 3 -> { // Special Skill
+                    return player.getSpecialSkill();
+                }
+                case 4 -> { // Item
+                    int itemIndex = promptForItemSelection(player.getInventory(), true);
+                    if (itemIndex == player.getInventory().size() + 1) continue;
+
+                    IItem item = player.getInventory().get(itemIndex-1);
+                    if (item == null) continue;
+
+                    return new ItemAction(itemIndex-1, item);
+                }
+            }
+        }
     }
 
     @Override
@@ -230,52 +254,5 @@ public class CombatConsole implements IBattleObserver {
         }
 
         return readIntInRange(1, max);
-    }
-
-    @Override
-    public int promptForItemTargetSelection(Entity self, List<Entity> enemies, boolean allowBack) {
-        displayMessage("Choose item target:");
-        displayMessage("1. " + self.getName() + " (Self)");
-
-        for (int i = 0; i < enemies.size(); i++) {
-            Entity enemy = enemies.get(i);
-            displayMessage((i + 2) + ". " + enemy.getName() + " (HP: " + enemy.getHp() + ")");
-        }
-
-        int max = enemies.size() + 1;
-        if (allowBack) {
-            displayMessage((enemies.size() + 2) + ". Back");
-            max++;
-        }
-
-        return readIntInRange(1, max);
-    }
-
-    @Override
-    public IAction requestAction(Player player, BattleContext context) {
-        while (true) {
-            int choice = promptForActionSelection(player.getCurrentCooldown());
-            displayMessage("choice: " + choice);
-            switch (choice) {
-                case 1 -> { // Attack
-                    return new BasicAttackAction();
-                }
-                case 2 -> { // Defend
-                    return new DefendAction();
-                }
-                case 3 -> { // Special Skill
-                    return player.getSpecialSkill();
-                }
-                case 4 -> { // Item
-                    int itemIndex = promptForItemSelection(player.getInventory(), true);
-                    if (itemIndex == player.getInventory().size() + 1) continue;
-
-                    IItem item = player.getInventory().get(itemIndex-1);
-                    if (item == null) continue;
-
-                    return new ItemAction(itemIndex-1, item);
-                }
-            }
-        }
     }
 }

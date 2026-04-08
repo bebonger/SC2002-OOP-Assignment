@@ -197,7 +197,7 @@ public class BattleController {
         boolean validAction = false;
 
         while (!validAction) {
-            IAction action = context.getObserver().requestAction(player, context);
+            IAction action = context.getObserver().promptForActionSelection(player, context);
             if (action.requiresCooldown()) {
                 if (player.getCurrentCooldown() > 0) {
                     observer.displayMessage("Action is on cooldown.");
