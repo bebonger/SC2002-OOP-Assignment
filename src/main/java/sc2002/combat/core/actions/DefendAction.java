@@ -8,7 +8,7 @@ import sc2002.combat.core.utils.TargetRequirement;
 public class DefendAction implements IAction {
     @Override
     public void execute(Entity attacker, Entity target, CombatContext context) {
-        attacker.addStatusEffect(new DefenseBoostEffect());
+        attacker.addStatusEffect(new DefenseBoostEffect(), context);
         context.getObserver().displayMessage(attacker.getName() + " takes a defensive stance!");
     }
 

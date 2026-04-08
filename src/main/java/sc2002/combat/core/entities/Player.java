@@ -25,14 +25,6 @@ public abstract class Player extends Entity {
         }
     }
 
-    public boolean useSpecialSkill(Entity target, CombatContext context) {
-        if (this.currentCooldown > 0) return false;
-
-        this.specialSkill.execute(this, target, context);
-        startCooldown();
-        return true;
-    }
-
     public void updateCooldown() {
         if (currentCooldown > 0) {
             currentCooldown--;

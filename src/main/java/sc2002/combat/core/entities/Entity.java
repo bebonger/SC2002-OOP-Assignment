@@ -64,8 +64,9 @@ public abstract class Entity {
         }
     }
 
-    public void addStatusEffect(StatusEffect effect) {
+    public void addStatusEffect(StatusEffect effect, CombatContext context) {
         this.statusEffects.add(effect);
+        context.getObserver().onStatusEffectApplied(this, effect.getName(), effect.getDuration());
     }
 
     public int getEffectiveAttack() {

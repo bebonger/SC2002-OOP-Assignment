@@ -13,11 +13,10 @@ public class ShieldBashSkill implements ISpecialSkillAction {
         int finalDamage = target.takeDamage(damage);
 
         // stun for 2 turns
-        target.addStatusEffect(new StunEffect(2));
+        target.addStatusEffect(new StunEffect(2), context);
 
         context.getObserver().onActionExecuted(attacker, "Shield Bash", target);
         context.getObserver().onDamageDealt(target, finalDamage, target.getHp(), !target.isAlive());
-        context.getObserver().displayMessage(target.getName() + " is stunned for 2 rounds");
     }
 
     @Override

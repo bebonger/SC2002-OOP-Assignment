@@ -88,7 +88,7 @@ public class CombatConsole implements ICombatBoundary {
         }
 
         String effect = effectName == null || effectName.isBlank() ? "Status Effect" : effectName;
-        System.out.println("ITEM | " + entity.getName() + " gains " + effect + " for " + duration + " turn(s).");
+        System.out.println("EFFECT | " + entity.getName() + " gains " + effect + " for " + duration + " turn(s).");
     }
 
     @Override
