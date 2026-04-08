@@ -1,8 +1,11 @@
 package sc2002.combat.ui;
 
 import java.util.List;
+import sc2002.combat.core.actions.IAction;
 import sc2002.combat.core.entities.Entity;
+import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.items.IItem;
+import sc2002.combat.core.utils.BattleContext;
 
 public interface IBattleObserver {
     void onRoundStart(int roundNumber);
@@ -34,4 +37,6 @@ public interface IBattleObserver {
     Entity promptForTargetSelection(List<Entity> enemies, boolean allowBack);
     int promptForItemSelection(List<IItem> items, boolean allowBack);
     int promptForItemTargetSelection(Entity self, List<Entity> enemies, boolean allowBack);
+    
+    IAction requestAction(Player player, BattleContext context);
 }

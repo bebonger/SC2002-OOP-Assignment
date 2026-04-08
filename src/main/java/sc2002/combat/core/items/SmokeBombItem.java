@@ -4,6 +4,7 @@ import sc2002.combat.core.effects.SmokeBombEffect;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.utils.BattleContext;
+import sc2002.combat.core.utils.TargetRequirement;
 
 public class SmokeBombItem implements IItem {
     @Override
@@ -15,5 +16,10 @@ public class SmokeBombItem implements IItem {
     @Override
     public String getName() {
         return "Smoke Bomb";
+    }
+
+    @Override 
+    public TargetRequirement getTargetRequirement() {
+        return TargetRequirement.NONE;
     }
 }

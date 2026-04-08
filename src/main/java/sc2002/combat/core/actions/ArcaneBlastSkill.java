@@ -3,6 +3,7 @@ package sc2002.combat.core.actions;
 import sc2002.combat.core.entities.Enemy;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.utils.BattleContext;
+import sc2002.combat.core.utils.TargetRequirement;
 
 public class ArcaneBlastSkill implements ISpecialSkillAction {
 
@@ -27,5 +28,10 @@ public class ArcaneBlastSkill implements ISpecialSkillAction {
                 }
             }
         }
+    }
+
+    @Override 
+    public TargetRequirement getTargetRequirement() {
+        return TargetRequirement.NONE;
     }
 }

@@ -3,17 +3,12 @@ package sc2002.combat.control;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import sc2002.combat.core.actions.BasicAttackAction;
-import sc2002.combat.core.actions.DefendAction;
 import sc2002.combat.core.actions.IAction;
-import sc2002.combat.core.actions.ItemAction;
 import sc2002.combat.core.entities.Enemy;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
-import sc2002.combat.core.items.IItem;
 import sc2002.combat.core.utils.BattleContext;
-import sc2002.combat.core.utils.ITargetable;
+import sc2002.combat.core.utils.TargetRequirement;
 import sc2002.combat.ui.IBattleObserver;
 
 public class BattleController {
@@ -180,7 +175,6 @@ public class BattleController {
         observer.onTurnStart(current);
 
         if (current instanceof Player player) {
-            player.updateCooldown();
             processPlayerTurn(player, context);
             return;
         }
@@ -199,106 +193,29 @@ public class BattleController {
     }
 
     private void processPlayerTurn(Player player, BattleContext context) {
-        boolean validInput = false;
-        while (!validInput) {
-            int actionChoice = observer.promptForActionSelection(player.getCurrentCooldown());
-            validInput = handlePlayerActionChoice(player, context, actionChoice);
-        }
-    }
+        player.updateCooldown();
+        boolean validAction = false;
 
-    private boolean handlePlayerActionChoice(Player player, BattleContext context, int actionChoice) {
-        return switch (actionChoice) {
-            case 1 -> handleBasicAttack(player, context);
-            case 2 -> handleDefend(player, context);
-            case 3 -> handleSpecialSkill(player, context);
-            case 4 -> handleItemUse(player, context);
-            default -> {
-                observer.displayMessage("Invalid action.");
-                yield false;
+        while (!validAction) {
+            IAction action = context.getObserver().requestAction(player, context);
+            if (action.requiresCooldown()) {
+                if (player.getCurrentCooldown() > 0) {
+                    observer.displayMessage("Action is on cooldown.");
+                    continue;
+                }
             }
-        };
-    }
 
-    private boolean handleBasicAttack(Player player, BattleContext context) {
-        return executeWithChosenEnemyTarget(target -> new BasicAttackAction().execute(player, target, context));
-    }
+            if (action.getTargetRequirement() != TargetRequirement.NONE) {
+                Entity target = context.getObserver().promptForTargetSelection(context.getEntities().subList(1, context.getEntities().size()), true);
+                if (target == null) continue;
 
-    private boolean handleDefend(Player player, BattleContext context) {
-        new DefendAction().execute(player, player, context);
-        return true;
-    }
-
-    private boolean handleSpecialSkill(Player player, BattleContext context) {
-        if (player.getSpecialSkill() == null) {
-            observer.displayMessage("No special skill available.");
-            return false;
-        }
-
-        if (player.getCurrentCooldown() > 0) {
-            observer.displayMessage("Special skill is on cooldown.");
-            return false;
-        }
-
-        return executeWithChosenEnemyTarget(target -> player.useSpecialSkill(target, context));
-    }
-
-    private boolean handleItemUse(Player player, BattleContext context) {
-        if (player.getInventory().isEmpty()) {
-            observer.displayMessage("No items in inventory.");
-            return false;
-        }
-
-        int itemIndex = chooseItemIndex(player);
-        if (itemIndex < 0) {
-            return false;
-        }
-
-        IItem item = player.getInventory().get(itemIndex);
-        if (item instanceof ITargetable) {
-            return executeWithChosenEnemyTarget(target -> new ItemAction(itemIndex).execute(player, target, context));
-        }
-
-        new ItemAction(itemIndex).execute(player, player, context);
-        return true;
-    }
-
-    private boolean executeWithChosenEnemyTarget(Consumer<Entity> action) {
-        Entity target = chooseEnemyTarget();
-        if (target == null) {
-            return false;
-        }
-
-        action.accept(target);
-        return true;
-    }
-
-    private Entity chooseEnemyTarget() {
-        List<Entity> aliveEnemies = getAliveEnemies();
-        if (aliveEnemies.isEmpty()) {
-            observer.displayMessage("No enemy targets available.");
-            return null;
-        }
-        return observer.promptForTargetSelection(aliveEnemies, true);
-    }
-
-    private int chooseItemIndex(Player player) {
-        List<IItem> inventory = player.getInventory();
-
-        int itemChoice = observer.promptForItemSelection(inventory, true);
-        if (itemChoice == inventory.size() + 1) {
-            return -1;
-        }
-        return itemChoice - 1;
-    }
-
-    private List<Entity> getAliveEnemies() {
-        List<Entity> aliveEnemies = new ArrayList<>();
-        for (Entity entity : entities) {
-            if (entity != null && !(entity instanceof Player) && entity.isAlive()) {
-                aliveEnemies.add(entity);
+                action.execute(player, target, context);
+            } else {
+                action.execute(player, null, context);
             }
+            validAction = true;
+            if (action.requiresCooldown()) player.startCooldown();
         }
-        return aliveEnemies;
     }
 
     private Player findFirstAlivePlayer() {

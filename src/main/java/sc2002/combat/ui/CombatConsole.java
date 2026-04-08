@@ -2,8 +2,14 @@ package sc2002.combat.ui;
 
 import java.util.List;
 import java.util.Scanner;
+import sc2002.combat.core.actions.BasicAttackAction;
+import sc2002.combat.core.actions.DefendAction;
+import sc2002.combat.core.actions.IAction;
+import sc2002.combat.core.actions.ItemAction;
 import sc2002.combat.core.entities.Entity;
+import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.items.IItem;
+import sc2002.combat.core.utils.BattleContext;
 
 public class CombatConsole implements IBattleObserver {
     private static final String DIVIDER = "--------------------------------------------------";
@@ -103,7 +109,7 @@ public class CombatConsole implements IBattleObserver {
         }
 
         String item = itemName == null || itemName.isBlank() ? "an item" : itemName;
-        System.out.println("ITEM | " + user.getName() + " used " + item + " on " + target.getName());
+        System.out.println("ITEM | " + user.getName() + " used " + item + ((target != null) ? " on " + target.getName() : ""));
     }
 
     @Override
@@ -243,5 +249,33 @@ public class CombatConsole implements IBattleObserver {
         }
 
         return readIntInRange(1, max);
+    }
+
+    @Override
+    public IAction requestAction(Player player, BattleContext context) {
+        while (true) {
+            int choice = promptForActionSelection(player.getCurrentCooldown());
+            displayMessage("choice: " + choice);
+            switch (choice) {
+                case 1 -> { // Attack
+                    return new BasicAttackAction();
+                }
+                case 2 -> { // Defend
+                    return new DefendAction();
+                }
+                case 3 -> { // Special Skill
+                    return player.getSpecialSkill();
+                }
+                case 4 -> { // Item
+                    int itemIndex = promptForItemSelection(player.getInventory(), true);
+                    if (itemIndex == player.getInventory().size() + 1) continue;
+
+                    IItem item = player.getInventory().get(itemIndex-1);
+                    if (item == null) continue;
+
+                    return new ItemAction(itemIndex-1, item);
+                }
+            }
+        }
     }
 }

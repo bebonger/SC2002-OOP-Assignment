@@ -129,7 +129,7 @@ public class GameInitialiser {
                 display("Health Potion added to inventory.");
             }
             case 2 -> {
-                player.getInventory().add(new PowerStoneItem());
+                player.getInventory().add(new PowerStoneItem(player.getSpecialSkill()));
                 display("Power Stone added to inventory.");
             }
             default -> {
