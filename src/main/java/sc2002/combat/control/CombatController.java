@@ -18,6 +18,9 @@ public class CombatController {
         ENEMY_WIN
     }
 
+    // Factories
+    ActionFactory actionFactory;
+
     private final List<Entity> entities;
     private final List<Entity> backupEnemies;
     private final ICombatBoundary boundary;
@@ -26,6 +29,7 @@ public class CombatController {
     private boolean backupSpawned;
 
     public CombatController(ICombatBoundary boundary) {
+        this.actionFactory = new ActionFactory();
         this.boundary = boundary;
         this.entities = new ArrayList<>();
         this.backupEnemies = new ArrayList<>();
@@ -196,7 +200,18 @@ public class CombatController {
         boolean validAction = false;
 
         while (!validAction) {
-            IAction action = context.getInterface().promptForActionSelection(player);
+            
+            int choice = boundary.promptForActionSelection(player);
+            IAction action = null;
+
+            if (choice == 4) { // Item
+                int itemIndex = boundary.promptForItemSelection(player.getInventory(), true);
+                if (itemIndex == -1) continue; // back was selected
+                action = actionFactory.createItemAction(itemIndex, player);
+            } else {
+                action = actionFactory.createAction(choice, player);
+            }
+
             if (action.requiresCooldown()) {
                 if (player.getCurrentCooldown() > 0) {
                     boundary.displayMessage("Action is on cooldown.");

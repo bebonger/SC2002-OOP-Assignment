@@ -2,10 +2,6 @@ package sc2002.combat.ui;
 
 import java.util.List;
 import java.util.Scanner;
-import sc2002.combat.core.actions.BasicAttackAction;
-import sc2002.combat.core.actions.DefendAction;
-import sc2002.combat.core.actions.IAction;
-import sc2002.combat.core.actions.ItemAction;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.items.IItem;
@@ -145,37 +141,13 @@ public class CombatConsole implements ICombatBoundary {
     }
 
     @Override
-    public IAction promptForActionSelection(Player player) {
+    public int promptForActionSelection(Player player) {
         displayMessage("Choose action:");
         displayMessage("1. Basic Attack");
         displayMessage("2. Defend");
         displayMessage("3. Special Skill (Cooldown: " + player.getCurrentCooldown() + ")");
         displayMessage("4. Use Item");
-        
-        while (true) {
-            int choice = readIntInRange(1, 4);
-            displayMessage("choice: " + choice);
-            switch (choice) {
-                case 1 -> { // Attack
-                    return new BasicAttackAction();
-                }
-                case 2 -> { // Defend
-                    return new DefendAction();
-                }
-                case 3 -> { // Special Skill
-                    return player.getSpecialSkill();
-                }
-                case 4 -> { // Item
-                    int itemIndex = promptForItemSelection(player.getInventory(), true);
-                    if (itemIndex == player.getInventory().size() + 1) continue;
-
-                    IItem item = player.getInventory().get(itemIndex-1);
-                    if (item == null) continue;
-
-                    return new ItemAction(itemIndex-1, item);
-                }
-            }
-        }
+        return readIntInRange(1, 4);
     }
 
     @Override
