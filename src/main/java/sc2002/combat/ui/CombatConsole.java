@@ -220,6 +220,8 @@ public class CombatConsole implements ICombatBoundary {
             max++;
         }
 
-        return readIntInRange(1, max);
+        int choice = readIntInRange(1, max);
+        if (allowBack && choice == items.size() + 1) return -1;
+        return choice - 1;
     }
 }
