@@ -113,15 +113,6 @@ public class CombatConsole implements ICombatBoundary {
     }
 
     @Override
-    public void displayMessage(String message) {
-        if (message == null || message.isBlank()) {
-            return;
-        }
-
-        System.out.println(message);
-    }
-
-    @Override
     public String readLineTrim() {
         return scanner.nextLine().trim();
     }

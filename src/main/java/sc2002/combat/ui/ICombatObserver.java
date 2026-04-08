@@ -2,7 +2,7 @@ package sc2002.combat.ui;
 
 import sc2002.combat.core.entities.Entity;
 
-public interface ICombatObserver {
+public interface ICombatObserver extends IUIOutput {
     void onRoundStart(int roundNumber);
     void onTurnStart(Entity activeEntity);
     void onDamageDealt(Entity target, int damage, int currentHP, boolean isEliminated);
@@ -11,5 +11,5 @@ public interface ICombatObserver {
     void onStatusEffectApplied(Entity entity, String effectName, int duration);
     void onStatusEffectExpired(Entity entity, String effectName);
     void onItemUsed(Entity user, String itemName, Entity target);
-    void displayMessage(String message);
+    
 }

@@ -8,11 +8,11 @@ import sc2002.combat.ui.ICombatBoundary;
 public class AppMain {
     public static void main(String[] args) {
         // Instantiate Boundary/UI
-        ICombatBoundary observer = new CombatConsole();
+        ICombatBoundary boundary = new CombatConsole();
 
         // Instantiate Controller components as per diagram
-        CombatController engine = new CombatController(observer);
-        GameInitialiser manager = new GameInitialiser(engine, observer);
+        CombatController controller = new CombatController(boundary);
+        GameInitialiser manager = new GameInitialiser(controller, boundary);
 
         // Start the game loop
         boolean isAppRunning = true;

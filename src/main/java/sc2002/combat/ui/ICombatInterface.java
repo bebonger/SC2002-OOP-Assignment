@@ -7,7 +7,7 @@ import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.items.IItem;
 import sc2002.combat.core.utils.BattleContext;
 
-public interface ICombatInterface {
+public interface ICombatInterface extends IUIOutput {
     String readLineTrim();
     String readNonEmpty(String prompt);
     int readIntInRange(int min, int max);
