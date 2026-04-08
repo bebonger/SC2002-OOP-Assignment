@@ -211,29 +211,33 @@ public class CombatConsole implements IBattleObserver {
     }
 
     @Override
-    public Entity promptForTargetSelection(List<Entity> enemies, boolean allowBack) {
-        if (enemies == null || enemies.isEmpty()) {
-            return null;
-        }
+    public Entity promptForTargetSelection(List<Entity> entities, boolean allowBack, boolean targetSelf) {
+        // filter the list based on the targetSelf flag
+        List<Entity> validTargets = entities.stream()
+                .filter(e -> targetSelf || !(e instanceof Player))
+                .filter(Entity::isAlive) // ensure we only target living things
+                .toList();
 
+        if (validTargets.isEmpty()) return null;
+
+        // display the filtered list
         displayMessage("Choose target:");
-        for (int i = 0; i < enemies.size(); i++) {
-            Entity enemy = enemies.get(i);
-            displayMessage((i + 1) + ". " + enemy.getName() + " (HP: " + enemy.getHp() + ")");
+        for (int i = 0; i < validTargets.size(); i++) {
+            Entity e = validTargets.get(i);
+            displayMessage((i + 1) + ". " + e.getName() + " (HP: " + e.getHp() + ")");
         }
 
-        int max = enemies.size();
+        // handle 'back' logic
+        int backOption = validTargets.size() + 1;
         if (allowBack) {
-            displayMessage((enemies.size() + 1) + ". Back");
-            max++;
+            displayMessage(backOption + ". Back");
         }
 
-        int choice = readIntInRange(1, max);
+        int choice = readIntInRange(1, allowBack ? backOption : validTargets.size());
 
-        displayMessage("" + choice);
-        if (allowBack && choice == max) return null;
+        if (allowBack && choice == backOption) return null;
 
-        return enemies.get(choice - 1);
+        return validTargets.get(choice - 1);
     }
 
     @Override

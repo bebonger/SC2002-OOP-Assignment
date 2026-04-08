@@ -206,7 +206,7 @@ public class BattleController {
             }
 
             if (action.getTargetRequirement() != TargetRequirement.NONE) {
-                Entity target = context.getObserver().promptForTargetSelection(context.getEntities().subList(1, context.getEntities().size()), true);
+                Entity target = context.getObserver().promptForTargetSelection(context.getEntities(), true, false);
                 if (target == null) continue;
 
                 action.execute(player, target, context);

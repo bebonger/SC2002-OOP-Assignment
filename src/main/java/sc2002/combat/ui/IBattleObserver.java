@@ -34,6 +34,6 @@ public interface IBattleObserver {
     int promptForClassSelection();
     int promptForDifficultySelection();
     int promptForStarterItemSelection(int itemNumber);
-    Entity promptForTargetSelection(List<Entity> enemies, boolean allowBack);
+    Entity promptForTargetSelection(List<Entity> enemies, boolean allowBack, boolean targetSelf);
     int promptForItemSelection(List<IItem> items, boolean allowBack);
 }
