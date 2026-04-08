@@ -1,6 +1,6 @@
 package sc2002.combat.core.actions;
 
-import sc2002.combat.control.BattleContext;
+import sc2002.combat.control.CombatContext;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.items.IItem;
@@ -16,7 +16,7 @@ public class ItemAction implements IAction {
     }
 
     @Override
-    public void execute(Entity attacker, Entity target, BattleContext context) {
+    public void execute(Entity attacker, Entity target, CombatContext context) {
         if (attacker instanceof Player p) {
             p.useItem(slotIndex, target, context);
         }

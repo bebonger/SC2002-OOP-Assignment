@@ -73,7 +73,7 @@
             <mxPoint x="460" y="260" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="umtH-Do70eod9iGh7qZi-18" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b1ddf0;strokeColor=#10739e;" value="BattleContext&lt;div&gt;getEntities(), getBoundary()&lt;/div&gt;" vertex="1">
+        <mxCell id="umtH-Do70eod9iGh7qZi-18" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b1ddf0;strokeColor=#10739e;" value="CombatContext&lt;div&gt;getEntities(), getBoundary()&lt;/div&gt;" vertex="1">
           <mxGeometry height="40" width="190" x="380" y="260" as="geometry" />
         </mxCell>
         <mxCell id="umtH-Do70eod9iGh7qZi-26" edge="1" parent="1" source="umtH-Do70eod9iGh7qZi-18" style="endArrow=classic;html=1;rounded=0;entryX=0.914;entryY=1.011;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;dashPattern=8 8;" target="umtH-Do70eod9iGh7qZi-1" value="">

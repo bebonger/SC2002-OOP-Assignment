@@ -2,7 +2,7 @@ package sc2002.combat.core.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import sc2002.combat.control.BattleContext;
+import sc2002.combat.control.CombatContext;
 import sc2002.combat.core.actions.ISpecialSkillAction;
 import sc2002.combat.core.items.IItem;
 
@@ -17,7 +17,7 @@ public abstract class Player extends Entity {
         this.inventory = new ArrayList<>();
     }
 
-    public void useItem(int index, Entity target, BattleContext context) {
+    public void useItem(int index, Entity target, CombatContext context) {
         
         if (index >= 0 && index < inventory.size()) {
             IItem item = inventory.remove(index);
@@ -25,11 +25,12 @@ public abstract class Player extends Entity {
         }
     }
 
-    public void useSpecialSkill(Entity target, BattleContext context) {
-        if (this.currentCooldown == 0) {
-            this.specialSkill.execute(this, target, context);
-            this.currentCooldown = MAX_COOLDOWN;
-        }
+    public boolean useSpecialSkill(Entity target, CombatContext context) {
+        if (this.currentCooldown > 0) return false;
+
+        this.specialSkill.execute(this, target, context);
+        startCooldown();
+        return true;
     }
 
     public void updateCooldown() {

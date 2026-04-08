@@ -57,7 +57,7 @@ public class CombatController {
         while (isBattleOngoing) {
             roundCount++;
 
-            BattleContext context = new BattleContext(entities, this.boundary);
+            CombatContext context = new CombatContext(entities, this.boundary);
             boundary.onRoundStart(roundCount);
 
             turnStrategy.sort(entities);
@@ -159,7 +159,7 @@ public class CombatController {
         return BattleOutcome.ENEMY_WIN;
     }
 
-    private void processRound(Entity current, BattleContext context) {
+    private void processRound(Entity current, CombatContext context) {
         if (current == null || !current.isAlive()) {
             return;
         }
@@ -191,7 +191,7 @@ public class CombatController {
         }
     }
 
-    private void processPlayerTurn(Player player, BattleContext context) {
+    private void processPlayerTurn(Player player, CombatContext context) {
         player.updateCooldown();
         boolean validAction = false;
 

@@ -1,6 +1,6 @@
 package sc2002.combat.core.actions;
 
-import sc2002.combat.control.BattleContext;
+import sc2002.combat.control.CombatContext;
 import sc2002.combat.core.entities.Enemy;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.utils.TargetRequirement;
@@ -8,7 +8,7 @@ import sc2002.combat.core.utils.TargetRequirement;
 public class ArcaneBlastSkill implements ISpecialSkillAction {
 
     @Override
-    public void execute(Entity attacker, Entity ignored, BattleContext context) {
+    public void execute(Entity attacker, Entity ignored, CombatContext context) {
         context.getObserver().onActionExecuted(attacker, "Arcane Blast", null);
         context.getObserver().displayMessage(attacker.getName() + " unleashes a wave of magical energy!");
 

@@ -2,7 +2,7 @@ package sc2002.combat.core.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import sc2002.combat.control.BattleContext;
+import sc2002.combat.control.CombatContext;
 import sc2002.combat.core.effects.StatusEffect;
 
 public abstract class Entity {
@@ -52,7 +52,7 @@ public abstract class Entity {
     }
 
     // Status Effect Lifecycle
-    public void updateStatusEffects(BattleContext context) {
+    public void updateStatusEffects(CombatContext context) {
         for (int i = statusEffects.size() - 1; i >= 0; i--) {
             StatusEffect effect = statusEffects.get(i);
             effect.onTurnStart(this, context);

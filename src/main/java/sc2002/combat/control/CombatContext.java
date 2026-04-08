@@ -7,11 +7,11 @@ import sc2002.combat.ui.ICombatBoundary;
 import sc2002.combat.ui.ICombatInterface;
 import sc2002.combat.ui.ICombatObserver;
 
-public class BattleContext {
+public class CombatContext {
     private final List<Entity> entityList;
     private final ICombatBoundary boundary;
 
-    public BattleContext(List<Entity> entityList, ICombatBoundary boundary) {
+    public CombatContext(List<Entity> entityList, ICombatBoundary boundary) {
         this.entityList = entityList;
         this.boundary = boundary;
     }

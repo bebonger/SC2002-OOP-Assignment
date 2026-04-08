@@ -1,6 +1,6 @@
 package sc2002.combat.core.effects;
 
-import sc2002.combat.control.BattleContext;
+import sc2002.combat.control.CombatContext;
 import sc2002.combat.core.entities.Entity;
 
 public abstract class StatusEffect {
@@ -12,7 +12,7 @@ public abstract class StatusEffect {
         this.duration = duration;
     }
 
-    public void onTurnStart(Entity owner, BattleContext context) {
+    public void onTurnStart(Entity owner, CombatContext context) {
         duration--;
     }
 

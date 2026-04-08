@@ -1,6 +1,6 @@
 package sc2002.combat.core.items;
 
-import sc2002.combat.control.BattleContext;
+import sc2002.combat.control.CombatContext;
 import sc2002.combat.core.actions.ISpecialSkillAction;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
@@ -14,7 +14,7 @@ public class PowerStoneItem implements IItem {
     }
 
     @Override
-    public void use(Player user, Entity target, BattleContext context) {
+    public void use(Player user, Entity target, CombatContext context) {
         // trigger skill immediately without cooldown reset
         context.getObserver().onItemUsed(user, "Power Stone", target);
         imbuedSkill.execute(user, target, context);

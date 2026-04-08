@@ -1,6 +1,6 @@
 package sc2002.combat.core.effects;
 
-import sc2002.combat.control.BattleContext;
+import sc2002.combat.control.CombatContext;
 import sc2002.combat.core.entities.Entity;
 
 // we technically don't need this class because ArcaneBlastSkill changes ONLY Wizard's base attack
@@ -19,7 +19,7 @@ public class AttackBoostEffect extends StatusEffect {
     }
 
     @Override
-    public void onTurnStart(Entity owner, BattleContext context) {
+    public void onTurnStart(Entity owner, CombatContext context) {
         super.onTurnStart(owner, context);
         if (context != null && duration > 0) {
             context.getObserver()
