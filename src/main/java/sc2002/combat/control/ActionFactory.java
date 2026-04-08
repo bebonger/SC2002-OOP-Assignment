@@ -9,7 +9,7 @@ import sc2002.combat.core.items.IItem;
 
 public class ActionFactory {
 
-    IAction createAction(int choice, Player player) {
+    public IAction createAction(int choice, Player player) {
         switch (choice){
             case 1 -> {
                 return new BasicAttackAction();
@@ -24,7 +24,7 @@ public class ActionFactory {
         return null;
     }
 
-    IAction createItemAction(int itemIndex, Player player) {
+    public IAction createItemAction(int itemIndex, Player player) {
         IItem item = player.getInventory().get(itemIndex);
         return new ItemAction(itemIndex, item);
     }
