@@ -5,14 +5,13 @@ import sc2002.combat.core.actions.IAction;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.items.IItem;
-import sc2002.combat.core.utils.BattleContext;
 
 public interface ICombatInterface extends IUIOutput {
     String readLineTrim();
     String readNonEmpty(String prompt);
     int readIntInRange(int min, int max);
 
-    IAction promptForActionSelection(Player player, BattleContext context);
+    IAction promptForActionSelection(Player player);
     int promptForClassSelection();
     int promptForDifficultySelection();
     int promptForStarterItemSelection(int itemNumber);

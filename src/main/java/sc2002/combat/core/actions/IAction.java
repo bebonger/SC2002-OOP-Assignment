@@ -1,7 +1,7 @@
 package sc2002.combat.core.actions;
 
+import sc2002.combat.control.BattleContext;
 import sc2002.combat.core.entities.Entity;
-import sc2002.combat.core.utils.BattleContext;
 import sc2002.combat.core.utils.TargetRequirement;
 
 public interface IAction {

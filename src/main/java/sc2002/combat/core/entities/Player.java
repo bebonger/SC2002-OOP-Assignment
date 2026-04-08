@@ -2,9 +2,9 @@ package sc2002.combat.core.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import sc2002.combat.control.BattleContext;
 import sc2002.combat.core.actions.ISpecialSkillAction;
 import sc2002.combat.core.items.IItem;
-import sc2002.combat.core.utils.BattleContext;
 
 public abstract class Player extends Entity {
     protected List<IItem> inventory;

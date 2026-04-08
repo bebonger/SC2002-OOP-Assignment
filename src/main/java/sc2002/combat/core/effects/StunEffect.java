@@ -1,7 +1,7 @@
 package sc2002.combat.core.effects;
 
+import sc2002.combat.control.BattleContext;
 import sc2002.combat.core.entities.Entity;
-import sc2002.combat.core.utils.BattleContext;
 
 public class StunEffect extends StatusEffect {
     public StunEffect(int duration) {

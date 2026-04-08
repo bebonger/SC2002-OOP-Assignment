@@ -1,8 +1,8 @@
 package sc2002.combat.core.actions;
 
+import sc2002.combat.control.BattleContext;
 import sc2002.combat.core.effects.StunEffect;
 import sc2002.combat.core.entities.Entity;
-import sc2002.combat.core.utils.BattleContext;
 import sc2002.combat.core.utils.TargetRequirement;
 
 public class ShieldBashSkill implements ISpecialSkillAction {
@@ -15,9 +15,9 @@ public class ShieldBashSkill implements ISpecialSkillAction {
         // stun for 2 turns
         target.addStatusEffect(new StunEffect(2));
 
-        context.getBoundary().onActionExecuted(attacker, "Shield Bash", target);
-        context.getBoundary().onDamageDealt(target, finalDamage, target.getHp(), !target.isAlive());
-        context.getBoundary().displayMessage(target.getName() + " is stunned for 2 rounds");
+        context.getObserver().onActionExecuted(attacker, "Shield Bash", target);
+        context.getObserver().onDamageDealt(target, finalDamage, target.getHp(), !target.isAlive());
+        context.getObserver().displayMessage(target.getName() + " is stunned for 2 rounds");
     }
 
     @Override

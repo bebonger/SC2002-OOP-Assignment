@@ -2,8 +2,8 @@ package sc2002.combat.core.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import sc2002.combat.control.BattleContext;
 import sc2002.combat.core.effects.StatusEffect;
-import sc2002.combat.core.utils.BattleContext;
 
 public abstract class Entity {
     protected String name;
@@ -41,8 +41,10 @@ public abstract class Entity {
         return finalDamage;
     }
 
-    public void heal(int amount) {
-        this.hp = Math.min(maxHp, this.hp + amount);
+    public int heal(int amount) {
+        int healAmount = Math.min(maxHp - hp, amount);
+        this.hp += healAmount;
+        return healAmount;
     }
 
     public boolean isAlive() {
@@ -56,7 +58,7 @@ public abstract class Entity {
             effect.onTurnStart(this, context);
 
             if (effect.isExpired()) {
-                context.getBoundary().onStatusEffectExpired(this, effect.getName());
+                context.getObserver().onStatusEffectExpired(this, effect.getName());
                 statusEffects.remove(i);
             }
         }

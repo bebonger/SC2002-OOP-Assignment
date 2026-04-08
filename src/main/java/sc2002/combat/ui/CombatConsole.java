@@ -9,7 +9,6 @@ import sc2002.combat.core.actions.ItemAction;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
 import sc2002.combat.core.items.IItem;
-import sc2002.combat.core.utils.BattleContext;
 
 public class CombatConsole implements ICombatBoundary {
     private static final String DIVIDER = "--------------------------------------------------";
@@ -146,7 +145,7 @@ public class CombatConsole implements ICombatBoundary {
     }
 
     @Override
-    public IAction promptForActionSelection(Player player, BattleContext context) {
+    public IAction promptForActionSelection(Player player) {
         displayMessage("Choose action:");
         displayMessage("1. Basic Attack");
         displayMessage("2. Defend");

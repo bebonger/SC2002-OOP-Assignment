@@ -1,15 +1,20 @@
 package sc2002.combat.core.items;
 
+import sc2002.combat.control.BattleContext;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
-import sc2002.combat.core.utils.BattleContext;
 import sc2002.combat.core.utils.TargetRequirement;
+import sc2002.combat.ui.ICombatObserver;
 
 public class PotionItem implements IItem {
     @Override
     public void use(Player user, Entity target, BattleContext context) {
-        user.heal(100);
-        context.getBoundary().onItemUsed(user, "Health Potion", target);
+        int healAmount = user.heal(100);
+        ICombatObserver observer = context.getObserver();
+
+        observer.onItemUsed(user, "Health Potion", target);
+        observer.displayMessage(user.getName() + " heals " + healAmount +" hp");
+        observer.displayMessage("New HP: " + user.getHp());
     }
 
     @Override

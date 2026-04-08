@@ -7,7 +7,6 @@ import sc2002.combat.core.actions.IAction;
 import sc2002.combat.core.entities.Enemy;
 import sc2002.combat.core.entities.Entity;
 import sc2002.combat.core.entities.Player;
-import sc2002.combat.core.utils.BattleContext;
 import sc2002.combat.core.utils.TargetRequirement;
 import sc2002.combat.ui.ICombatBoundary;
 
@@ -197,7 +196,7 @@ public class CombatController {
         boolean validAction = false;
 
         while (!validAction) {
-            IAction action = context.getBoundary().promptForActionSelection(player, context);
+            IAction action = context.getInterface().promptForActionSelection(player);
             if (action.requiresCooldown()) {
                 if (player.getCurrentCooldown() > 0) {
                     boundary.displayMessage("Action is on cooldown.");
@@ -206,7 +205,7 @@ public class CombatController {
             }
 
             if (action.getTargetRequirement() != TargetRequirement.NONE) {
-                Entity target = context.getBoundary().promptForTargetSelection(context.getEntities(), true, false);
+                Entity target = context.getInterface().promptForTargetSelection(context.getEntities(), true, false);
                 if (target == null) continue;
 
                 action.execute(player, target, context);
